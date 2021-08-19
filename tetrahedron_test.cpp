@@ -13,7 +13,7 @@
 #define N 80    // how fine to subdivide the interval [0, pi]
 #define O 1     // set higher to avoid low "tilt planes"
 #define pi M_PI
-#define USE_NEAR_RULES
+//#define USE_NEAR_RULES
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha, 
@@ -81,9 +81,6 @@ int main() {
 
   // Set angles for an ACUTE base triangles ABC
   A =  8*pi/19; B =  6*pi/19; C =  5*pi/19;
-// A =  8*pi/17; B =  5*pi/17; C =  4*pi/17;
-// A = 11*pi/31; B = 11*pi/31; C =  9*pi/31;
-// A = 29*pi/61; B = 16*pi/61; C = 16*pi/61;
 
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
   sinA = sin(A); sinB = sin(B); sinC = sin(C);
@@ -169,5 +166,4 @@ int main() {
   printf("Number of rejected calls for a data point: %d\n", rejected);
   printf("(Note: near the boundary, an \"unallowable\" cell might actually ");
   printf("have an allowable portion.)\n\n");
-
 }
