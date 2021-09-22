@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/22/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -10,15 +10,16 @@
 #include <cmath>
 
 #define M 1000  // how many (alpha, beta, gamma) points (M^3)?
-#define N 80    // how fine to subdivide the interval [0, pi]
+#define N 100   // how fine to subdivide the interval [0, pi]
 #define O 1     // set higher to avoid low "tilt planes"
 #define pi M_PI
+#define ACUTE_TEST
 //#define USE_NEAR_RULES
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
-// the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha, 
+// the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
 // beta and gamma, at the point of intersection of the three planes.
-bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB, 
+bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
     double cos_tau1, cos_tau2, cos_tau3, sin_tau1, sin_tau2, sin_tau3;
     double cos_delta1, cos_delta2, cos_delta3, sin_delta1, sin_delta2, sin_delta3;
@@ -76,15 +77,21 @@ void show_array(int a[N][N][N]) {
 int main() {
 
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0;
-  double A, B, C, cosA, cosB, cosC, sinA, sinB, sinC, alpha, beta, gamma, tau1,
-    tau2, tau3;
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma;
 
-  // Set angles for an ACUTE base triangles ABC
-  A =  8*pi/19; B =  6*pi/19; C =  5*pi/19;
+  //  Set angles for an ACUTE base triangles ABC
+   A =  8*pi/19;  B =  6*pi/19;  C =  5*pi/19;
+// A =  4*pi/19;  B =  6*pi/19;  C =  9*pi/19;
+// A =  5*pi/19;  B =  7*pi/19;  C =  7*pi/19;
+// A =  9*pi/19;  B =  9*pi/19;  C =  1*pi/19;
+// A =  2*pi/19;  B =  9*pi/19;  C =  8*pi/19;
+// A =  12*pi/19; B =  3*pi/19;  C =  4*pi/19;
+// A =  4*pi/19;  B =  3*pi/19;  C = 12*pi/19;
+// A =  5*pi/19;  B =  9*pi/19;  C =  5*pi/19;
+// A =  5*pi/19;  B = 10*pi/19;  C =  4*pi/19;
 
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
-  sinA = sin(A); sinB = sin(B); sinC = sin(C);
-  clear_array(states);
+//  clear_array(states);
 
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
@@ -104,41 +111,53 @@ int main() {
           A + beta + gamma  < 2*pi &&
           alpha + B + gamma < 2*pi &&
           alpha + beta + C  < 2*pi &&
+
+           beta + gamma - alpha < 2*(B+C) &&
+          gamma + alpha -  beta < 2*(C+A) &&
+          alpha +  beta - gamma < 2*(A+B)
+
+#ifdef ACUTE_TEST
+&&
           (alpha > A || beta  < B || beta  < C + alpha) &&
           (alpha > A || gamma < C || gamma < B + alpha) &&
           (beta  > B || gamma < C || gamma < A + beta ) &&
           (beta  > B || alpha < A || alpha < C + beta ) &&
           (gamma > C || alpha < A || alpha < B + gamma) &&
           (gamma > C || beta  < B || beta  < A + gamma) &&
+
           (alpha > A || cosC * cos(beta)  + cosB * cos(gamma) > 0) &&
           (beta  > B || cosA * cos(gamma) + cosC * cos(alpha) > 0) &&
           (gamma > C || cosB * cos(alpha) + cosA * cos(beta)  > 0)
+
 #ifdef USE_NEAR_RULES
-          && (alpha > A || B < C || B > A + C ||
-            A * (beta + gamma - alpha) + (B - C) * (alpha + beta - gamma) < 2 * A * B)
-          && (alpha > A || C < B || C > A + B ||
-            A * (gamma + beta - alpha) + (C - B) * (alpha + gamma - beta) < 2 * A * C)
-          && (beta  > B || C < A || C > B + A ||
-            B * (gamma + alpha - beta) + (C - A) * (beta + gamma - alpha) < 2 * B * C)
-          && (beta  > B || A < C || A > B + C ||
-            B * (alpha + gamma - beta) + (A - C) * (beta + alpha - gamma) < 2 * B * A)
-          && (gamma > C || A < B || A > C + B ||
-            C * (alpha + beta - gamma) + (A - B) * (gamma + alpha - beta) < 2 * C * A)
-          && (gamma > C || B < A || B > C + A ||
-            C * (beta + alpha - gamma) + (B - A) * (gamma + beta - alpha) < 2 * C * B)
-          && (alpha > A || B < C || beta  < B ||
-            A * (beta + gamma - alpha) + (B - C) * (beta - alpha - gamma) < 2 * A * C)
-          && (alpha > A || C < B || gamma < C ||
-            A * (gamma + beta - alpha) + (C - B) * (gamma - alpha - beta) < 2 * A * B)
-          && (beta  > B || C < A || gamma < C ||
-            B * (gamma + alpha - beta) + (C - A) * (gamma - beta - alpha) < 2 * B * A)
-          && (beta  > B || A < C || alpha < A ||
-            B * (alpha + gamma - beta) + (A - C) * (alpha - beta - gamma) < 2 * B * C)
-          && (gamma > C || A < B || alpha < A ||
-            C * (alpha + beta - gamma) + (A - B) * (alpha - gamma - beta) < 2 * C * B)
-          && (gamma > C || B < A || beta  < B ||
+&& 
+          (alpha > A || B < C || B > A + C ||
+            A * (beta + gamma - alpha) + (B - C) * (alpha + beta - gamma) < 2 * A * B) &&
+          (alpha > A || C < B || C > A + B ||
+            A * (gamma + beta - alpha) + (C - B) * (alpha + gamma - beta) < 2 * A * C) &&
+          (beta  > B || C < A || C > B + A ||
+            B * (gamma + alpha - beta) + (C - A) * (beta + gamma - alpha) < 2 * B * C) &&
+          (beta  > B || A < C || A > B + C ||
+            B * (alpha + gamma - beta) + (A - C) * (beta + alpha - gamma) < 2 * B * A) &&
+          (gamma > C || A < B || A > C + B ||
+            C * (alpha + beta - gamma) + (A - B) * (gamma + alpha - beta) < 2 * C * A) &&
+          (gamma > C || B < A || B > C + A ||
+            C * (beta + alpha - gamma) + (B - A) * (gamma + beta - alpha) < 2 * C * B) &&
+          (alpha > A || B < C || beta  < B ||
+            A * (beta + gamma - alpha) + (B - C) * (beta - alpha - gamma) < 2 * A * C) &&
+          (alpha > A || C < B || gamma < C ||
+            A * (gamma + beta - alpha) + (C - B) * (gamma - alpha - beta) < 2 * A * B) &&
+          (beta  > B || C < A || gamma < C ||
+            B * (gamma + alpha - beta) + (C - A) * (gamma - beta - alpha) < 2 * B * A) &&
+          (beta  > B || A < C || alpha < A ||
+            B * (alpha + gamma - beta) + (A - C) * (alpha - beta - gamma) < 2 * B * C) &&
+          (gamma > C || A < B || alpha < A ||
+            C * (alpha + beta - gamma) + (A - B) * (alpha - gamma - beta) < 2 * C * B) &&
+          (gamma > C || B < A || beta  < B ||
             C * (beta + alpha - gamma) + (B - A) * (beta - gamma - alpha) < 2 * C * A)
 #endif
+#endif
+
         ) states[i][j][k] += 2;
   }
 
