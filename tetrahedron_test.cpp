@@ -3,14 +3,16 @@
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
+// Note: Recommend redirecting the output to a file, and scrolling through that file.
+
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
 #include <cstdio>
 #include <cmath>
 
-#define M 1000  // how many (alpha, beta, gamma) points (M^3)?
-#define N 100   // how fine to subdivide the interval [0, pi]
+#define M 1100  // how many (alpha, beta, gamma) points (M^3)?
+#define N 120   // how fine to subdivide the interval [0, pi]
 #define O 1     // set higher to avoid low "tilt planes"
 #define pi M_PI
 #define ACUTE_TEST
@@ -46,7 +48,7 @@ void clear_array(int a[N][N][N]) {
         a[i][j][k] = 0;
 }
 
-int ind(double angle) {
+inline int ind(double angle) {
   int i = (int) (N*angle/pi);
   if (i < 0) i = 0;
   if (i >= N) i = N-1;
@@ -157,7 +159,6 @@ int main() {
             C * (beta + alpha - gamma) + (B - A) * (beta - gamma - alpha) < 2 * C * A)
 #endif
 #endif
-
         ) states[i][j][k] += 2;
   }
 
@@ -177,12 +178,12 @@ int main() {
         }
         total++;
   }
-  printf("Number of   occupied   allowable cells:    %d\n", count3);
-  printf("Number of unoccupied   allowable cells:    %d\n", count2);
-  printf("Number of   occupied unallowable cells:    %d\n", count1);
-  printf("Number of unoccupied unallowable cells:    %d\n", count0);
+  printf("Number of   occupied   \"allowable\" cells:    %d\n", count3);
+  printf("Number of unoccupied   \"allowable\" cells:    %d\n", count2);
+  printf("Number of   occupied \"unallowable\" cells:    %d\n", count1);
+  printf("Number of unoccupied \"unallowable\" cells:    %d\n", count0);
   printf("Total number of cells in the array:        %d\n", total);
   printf("Number of rejected calls for a data point: %d\n", rejected);
   printf("(Note: near the boundary, an \"unallowable\" cell might actually ");
-  printf("have an allowable portion.)\n\n");
+  printf("have an \"allowable\" portion.)\n\n");
 }
