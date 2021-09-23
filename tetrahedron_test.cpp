@@ -12,7 +12,7 @@
 #include <cmath>
 
 #define M 1100  // how many (alpha, beta, gamma) points (M^3)?
-#define N 120   // how fine to subdivide the interval [0, pi]
+#define N 100   // how fine to subdivide the interval [0, pi]
 #define O 1     // set higher to avoid low "tilt planes"
 #define pi M_PI
 #define ACUTE_TEST
