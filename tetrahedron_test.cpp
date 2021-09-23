@@ -159,6 +159,7 @@ int main() {
             C * (beta + alpha - gamma) + (B - A) * (beta - gamma - alpha) < 2 * C * A)
 #endif
 #endif
+
         ) states[i][j][k] += 2;
   }
 
@@ -178,12 +179,12 @@ int main() {
         }
         total++;
   }
-  printf("Number of   occupied   \"allowable\" cells:    %d\n", count3);
-  printf("Number of unoccupied   \"allowable\" cells:    %d\n", count2);
-  printf("Number of   occupied \"unallowable\" cells:    %d\n", count1);
-  printf("Number of unoccupied \"unallowable\" cells:    %d\n", count0);
-  printf("Total number of cells in the array:        %d\n", total);
-  printf("Number of rejected calls for a data point: %d\n", rejected);
+  printf("Number of   occupied   \"allowable\" cells:    %8d\n", count3);
+  printf("Number of unoccupied   \"allowable\" cells:    %8d\n", count2);
+  printf("Number of   occupied \"unallowable\" cells:    %8d\n", count1);
+  printf("Number of unoccupied \"unallowable\" cells:    %8d\n", count0);
+  printf("Total number of cells in the array:          %8d\n", total);
+  printf("Number of rejected calls for a data point:   %8d\n", rejected);
   printf("(Note: near the boundary, an \"unallowable\" cell might actually ");
   printf("have an \"allowable\" portion.)\n\n");
 }
