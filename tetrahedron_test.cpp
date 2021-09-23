@@ -159,7 +159,6 @@ int main() {
             C * (beta + alpha - gamma) + (B - A) * (beta - gamma - alpha) < 2 * C * A)
 #endif
 #endif
-
         ) states[i][j][k] += 2;
   }
 
