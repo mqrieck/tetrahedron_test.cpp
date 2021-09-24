@@ -78,7 +78,7 @@ void show_array(int a[N][N][N]) {
 int main() {
 
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma;
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma;
 
   //  Set the angles for the base triangle ABC
   //  Acute triangles:
@@ -110,6 +110,9 @@ int main() {
         alpha = (i+.5)*pi/N;
         beta  = (j+.5)*pi/N;
         gamma = (k+.5)*pi/N;
+        cos_alpha = cos(alpha);
+        cos_beta  = cos(beta);
+        cos_gamma = cos(gamma);
         if (
           alpha +  beta + gamma < 2*pi &&
           alpha <  beta + gamma &&
@@ -129,9 +132,9 @@ int main() {
           (beta  > B || alpha < A || alpha < C + beta ) &&
           (gamma > C || alpha < A || alpha < B + gamma) &&
           (gamma > C || beta  < B || beta  < A + gamma) &&
-          (alpha > A || cosC * cos(beta)  + cosB * cos(gamma) > 0) &&
-          (beta  > B || cosA * cos(gamma) + cosC * cos(alpha) > 0) &&
-          (gamma > C || cosB * cos(alpha) + cosA * cos(beta)  > 0)
+          (alpha > A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
+          (beta  > B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
+          (gamma > C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
         ) states[i][j][k] += 2;
   }
