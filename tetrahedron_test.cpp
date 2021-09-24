@@ -110,6 +110,10 @@ int main() {
         beta  = (j+.5)*pi/N;
         gamma = (k+.5)*pi/N;
         if (
+          alpha +  beta + gamma < 2*pi &&
+          alpha <  beta + gamma &&
+           beta < gamma + alpha &&
+          gamma < alpha +  beta &&
           A + beta + gamma  < 2*pi &&
           alpha + B + gamma < 2*pi &&
           alpha + beta + C  < 2*pi &&
