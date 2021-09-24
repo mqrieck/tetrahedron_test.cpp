@@ -11,11 +11,12 @@
 #include <cstdio>
 #include <cmath>
 
-#define M 1100                    // how many (alpha, beta, gamma) points (M^3)?
-#define N 100                     // how fine to subdivide the interval [0, pi]
-#define O 1                       // set higher to avoid low "tilt planes"
-#define pi M_PI                   // pi = 3.141592654..., of course
-#define ACUTE_TEST                // only appropriate for acute base triangle ABC
+#define M 1100                // how many (alpha, beta, gamma) points (M^3)?
+#define N 100                 // how fine to subdivide the interval [0, pi]
+#define O 1                   // set higher to avoid low "tilt planes"
+#define pi M_PI               // pi = 3.141592654..., of course
+#define ACUTE_TEST            // only appropriate for acute base triangle ABC
+//#define COSINES_TEST        // include the "cosines test" when using an acute triangle
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
@@ -131,10 +132,13 @@ int main() {
           (beta  > B || gamma < C || gamma < A + beta ) &&
           (beta  > B || alpha < A || alpha < C + beta ) &&
           (gamma > C || alpha < A || alpha < B + gamma) &&
-          (gamma > C || beta  < B || beta  < A + gamma) &&
+          (gamma > C || beta  < B || beta  < A + gamma)
+#ifdef COSINES_TEST
+&&
           (alpha > A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
           (beta  > B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
           (gamma > C || cosB * cos_alpha + cosA * cos_beta  > 0)
+#endif
 #endif
         ) states[i][j][k] += 2;
   }
