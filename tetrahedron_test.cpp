@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/22/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/24/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -81,15 +81,17 @@ int main() {
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma;
 
-  //  Set angles for an ACUTE base triangles ABC
+  //  Set the angles for the base triangle ABC
+  //  Acute triangles:
    A =  8*pi/19;  B =  6*pi/19;  C =  5*pi/19;
 // A =  4*pi/19;  B =  6*pi/19;  C =  9*pi/19;
 // A =  5*pi/19;  B =  7*pi/19;  C =  7*pi/19;
 // A =  9*pi/19;  B =  9*pi/19;  C =  1*pi/19;
 // A =  2*pi/19;  B =  9*pi/19;  C =  8*pi/19;
+// A =  5*pi/19;  B =  9*pi/19;  C =  5*pi/19;
+  // Obtuse triangles:
 // A =  12*pi/19; B =  3*pi/19;  C =  4*pi/19;
 // A =  4*pi/19;  B =  3*pi/19;  C = 12*pi/19;
-// A =  5*pi/19;  B =  9*pi/19;  C =  5*pi/19;
 // A =  5*pi/19;  B = 10*pi/19;  C =  4*pi/19;
 
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
