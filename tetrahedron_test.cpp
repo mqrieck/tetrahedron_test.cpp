@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/24/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/25/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -17,6 +17,7 @@
 #define pi M_PI               // pi = 3.141592654..., of course
 #define ACUTE_TEST            // only appropriate for acute base triangle ABC
 //#define COSINES_TEST        // include the "cosines test" when using an acute triangle
+#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
@@ -61,10 +62,11 @@ void show_array(int a[N][N][N]) {
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
         switch (a[i][j][k]) {
-          case 0: printf("."); break;  // a "prohibited" cell that is empty
-          case 1: printf("x"); break;  // a "prohibited" cell containing a data pt.
-          case 2: printf(" "); break;  // an "allowable" cell that is empty
-          case 3: printf("o");         // an "allowable" cell containing a data pt.
+          case 0:  printf("."); break;  // a "prohibited" cell that is empty
+          case 1:  printf("x"); break;  // a "prohibited" cell containing a data pt.
+          case 2:  printf(" "); break;  // an "allowable" cell that is empty
+          case 3:  printf("o"); break;  // an "allowable" cell containing a data pt.
+          default: printf("@");
         }
       }
       printf("\n");
@@ -141,6 +143,11 @@ int main() {
 #endif
 #endif
         ) states[i][j][k] += 2;
+#ifdef SHOW_CUTOFFS
+        if (fabs(alpha-A) < .015) states[i][j][k] = 10;
+        if (fabs( beta-B) < .015) states[i][j][k] = 10;
+        if (fabs(gamma-C) < .015) states[i][j][k] = 10;
+#endif
   }
 
   // Show slices of the array, indicating the nature of each cell.
