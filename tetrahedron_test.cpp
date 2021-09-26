@@ -66,7 +66,7 @@ void show_array(int a[N][N][N]) {
           case 1:  printf("x"); break;  // a "prohibited" cell containing a data pt.
           case 2:  printf(" "); break;  // an "allowable" cell that is empty
           case 3:  printf("o"); break;  // an "allowable" cell containing a data pt.
-          default: printf("@");
+          default: printf("#");
         }
       }
       printf("\n");
@@ -144,9 +144,12 @@ int main() {
 #endif
         ) states[i][j][k] += 2;
 #ifdef SHOW_CUTOFFS
-        if (fabs(alpha-A) < .015) states[i][j][k] = 10;
-        if (fabs( beta-B) < .015) states[i][j][k] = 10;
-        if (fabs(gamma-C) < .015) states[i][j][k] = 10;
+        if (fabs(alpha-A) < .015)    states[i][j][k] = 10;
+        if (fabs( beta-B) < .015)    states[i][j][k] = 10;
+        if (fabs(gamma-C) < .015)    states[i][j][k] = 10;
+        if (fabs(alpha-pi+A) < .015) states[i][j][k] = 10;
+        if (fabs( beta-pi+B) < .015) states[i][j][k] = 10;
+        if (fabs(gamma-pi+C) < .015) states[i][j][k] = 10;
 #endif
   }
 
