@@ -57,7 +57,7 @@ inline int ind(double angle) {
 }
 
 void show_array(int a[N][N][N]) {
-  printf("\n\n\n");
+  printf("\n");
   for (int i=0; i<N-1; i++) {
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
@@ -98,6 +98,7 @@ int main() {
 
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
 //  clear_array(states);
+  printf("\n\nA = %.4f , B = %.4f , C = %.4f\n", A, B, C);
 
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
