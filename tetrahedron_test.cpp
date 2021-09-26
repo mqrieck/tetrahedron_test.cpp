@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/25/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/26/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -58,7 +58,7 @@ inline int ind(double angle) {
 
 void show_array(int a[N][N][N]) {
   printf("\n\n\n");
-  for (int i=0; i<N; i++) {
+  for (int i=0; i<N-1; i++) {
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
         switch (a[i][j][k]) {
@@ -147,9 +147,9 @@ int main() {
         if (fabs(alpha-A) < .015)    states[i][j][k] = 10;
         if (fabs( beta-B) < .015)    states[i][j][k] = 10;
         if (fabs(gamma-C) < .015)    states[i][j][k] = 10;
-        if (fabs(alpha-pi+A) < .015) states[i][j][k] = 10;
-        if (fabs( beta-pi+B) < .015) states[i][j][k] = 10;
-        if (fabs(gamma-pi+C) < .015) states[i][j][k] = 10;
+//      if (fabs(alpha-pi+A) < .015) states[i][j][k] = 10;
+//      if (fabs( beta-pi+B) < .015) states[i][j][k] = 10;
+//      if (fabs(gamma-pi+C) < .015) states[i][j][k] = 10;
 #endif
   }
 
