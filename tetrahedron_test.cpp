@@ -108,12 +108,12 @@ int main() {
 
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles for a\n");
   printf("point P that extends the triangle ABC to form a tetrahedron. If a cell contains such a point, we call it \"occupied;\"\n");
-  printf("otherwise, the cell is \"unoccupied\". (A basic understanding of the problem in the paper is presumed here.)\n\n");
+  printf("otherwise, the cell is \"unoccupied.\" (A basic understanding of the problem in the paper is presumed here.)\n\n");
 
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
-  printf("an occupied unallowable region. This latter case is possible since an \"unallowable\" cell might contain an\n");
-  printf("allowable portion of the cube (when it contains part of the boundary).\n");
+  printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
+  printf("portion of the cube (when it contains part of the boundary). Pound signs show where α = A, β = B or γ = C.\n");
 
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
