@@ -98,7 +98,22 @@ int main() {
 
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
 //  clear_array(states);
-  printf("\n\nA = %.4f , B = %.4f , C = %.4f\n", A, B, C);
+  printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
+  printf("The following pictures show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
+  printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
+  printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
+  printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
+  printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
+  printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
+
+  printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles for a\n");
+  printf("point P that extends the triangle ABC to form a tetrahedron. If a cell contains such a point, we call it \"occupied;\"\n");
+  printf("otherwise, the cell is \"unoccupied\". (A basic understanding of the problem in the paper is presumed here.)\n\n");
+
+  printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
+  printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
+  printf("an occupied unallowable region. This latter case is possible since an \"unallowable\" cell might contain an\n");
+  printf("allowable portion of the cube (when it contains part of the boundary).\n");
 
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
@@ -170,12 +185,10 @@ int main() {
         }
         total++;
   }
-  printf("Number of   occupied   \"allowable\" cells:    %8d\n", count3);
-  printf("Number of unoccupied   \"allowable\" cells:    %8d\n", count2);
-  printf("Number of   occupied \"unallowable\" cells:    %8d\n", count1);
-  printf("Number of unoccupied \"unallowable\" cells:    %8d\n", count0);
-  printf("Total number of cells in the array:          %8d\n", total);
-  printf("Number of rejected calls for a data point:   %8d\n", rejected);
-  printf("(Note: near the boundary, an \"unallowable\" cell might actually ");
-  printf("have an \"allowable\" portion.)\n\n");
+  printf("Number of   occupied   allowable cells:    %8d\n",   count3);
+  printf("Number of unoccupied   allowable cells:    %8d\n",   count2);
+  printf("Number of   occupied unallowable cells:    %8d\n",   count1);
+  printf("Number of unoccupied unallowable cells:    %8d\n",   count0);
+  printf("Total number of cells in the array:        %8d\n",   total);
+  printf("Number of rejected calls for a data point: %8d\n\n", rejected);
 }
