@@ -107,7 +107,7 @@ int main() {
   printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
 
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles for a\n");
-  printf("point P that extends the triangle ABC to form a tetrahedron. If a cell contains such a point, we call it \"occupied;\"\n");
+  printf("point that extends the triangle ABC to form a tetrahedron. If a cell contains such a point, we call it \"occupied;\"\n");
   printf("otherwise, the cell is \"unoccupied.\" (A basic understanding of the problem in the paper is presumed here.)\n\n");
 
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
