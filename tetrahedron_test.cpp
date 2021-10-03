@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 9/26/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/3/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -59,6 +59,7 @@ inline int ind(double angle) {
 void show_array(int a[N][N][N]) {
   printf("\n");
   for (int i=0; i<N-1; i++) {
+    printf("α = %1.3f:\n", (i+.5)*pi/N);
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
         switch (a[i][j][k]) {
