@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/3/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/4/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -107,9 +107,10 @@ int main() {
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
   printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
 
-  printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles for a\n");
-  printf("point that extends the triangle ABC to form a tetrahedron. If a cell contains such a point, we call it \"occupied;\"\n");
-  printf("otherwise, the cell is \"unoccupied.\" (A basic understanding of the problem in the paper is presumed here.)\n\n");
+  printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles for\n");
+  printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
+  printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
+  printf("in the paper is presumed here.)\n\n");
 
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
