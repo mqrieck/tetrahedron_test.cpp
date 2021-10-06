@@ -1,9 +1,11 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/4/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/6/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
 // Note: Recommend redirecting the output to a file, and scrolling through that file.
+
+// Note: Can use three command line integer parameters to specify proportion A:B:C.
 
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
@@ -56,19 +58,28 @@ inline int ind(double angle) {
   return i;
 }
 
-void show_array(int a[N][N][N]) {
+void show_array(int a[N][N][N], int i0, int j0, int k0) {
   printf("\n");
   for (int i=0; i<N-1; i++) {
     printf("α = %1.3f:\n", (i+.5)*pi/N);
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
+#ifdef SHOW_CUTOFFS
+  if (i==i0 || j==j0 || k==k0) printf("#");
+  else  switch (a[i][j][k]) {
+          case 0:  printf("."); break;  // a "prohibited" cell that is empty
+          case 1:  printf("x"); break;  // a "prohibited" cell containing a data pt.
+          case 2:  printf(" "); break;  // an "allowable" cell that is empty
+          case 3:  printf("o"); break;  // an "allowable" cell containing a data pt.
+        }
+#else
         switch (a[i][j][k]) {
           case 0:  printf("."); break;  // a "prohibited" cell that is empty
           case 1:  printf("x"); break;  // a "prohibited" cell containing a data pt.
           case 2:  printf(" "); break;  // an "allowable" cell that is empty
           case 3:  printf("o"); break;  // an "allowable" cell containing a data pt.
-          default: printf("#");
         }
+#endif
       }
       printf("\n");
     }
@@ -79,25 +90,41 @@ void show_array(int a[N][N][N]) {
   printf("\n");
 }
 
-int main() {
+int main(int argc, char **argv) {
 
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma;
-
-  //  Set the angles for the base triangle ABC
-  //  Acute triangles:
-   A =  8*pi/19;  B =  6*pi/19;  C =  5*pi/19;
-// A =  4*pi/19;  B =  6*pi/19;  C =  9*pi/19;
-// A =  5*pi/19;  B =  7*pi/19;  C =  7*pi/19;
-// A =  9*pi/19;  B =  9*pi/19;  C =  1*pi/19;
-// A =  2*pi/19;  B =  9*pi/19;  C =  8*pi/19;
-// A =  5*pi/19;  B =  9*pi/19;  C =  5*pi/19;
-  // Obtuse triangles:
-// A =  12*pi/19; B =  3*pi/19;  C =  4*pi/19;
-// A =  4*pi/19;  B =  3*pi/19;  C = 12*pi/19;
-// A =  5*pi/19;  B = 10*pi/19;  C =  4*pi/19;
-
+  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0;
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den;
+  // Set the angles for the base triangle ABC
+  // Can use three command line integer parameters to specify the proportion A : B : C
+  if (argc == 4) {
+    den = atoi(argv[1]) + atoi(argv[2]) + atoi(argv[3]);
+    A = atoi(argv[1])*pi / den;
+    B = atoi(argv[2])*pi / den;
+    C = atoi(argv[3])*pi / den;
+  } else {
+  // Or else specify the proportions here
+  //   Acute triangles:
+    A =  8;  B =  6;  C =  5;
+//  A =  4;  B =  6;  C =  9;
+//  A =  5;  B =  7;  C =  7;
+//  A =  9;  B =  9;  C =  1;
+//  A =  2;  B =  9;  C =  8;
+//  A =  5;  B =  9;  C =  5;
+  //  Obtuse triangles:
+//  A = 12;  B =  3;  C =  4;
+//  A =  4;  B =  3;  C = 12;
+//  A =  5;  B = 10;  C =  4;
+    den = A + B + C;
+    A = A*pi / den; B = B*pi / den; C = C*pi / den;
+  }
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
+#ifdef SHOW_CUTOFFS
+  i0 = ind(A); j0 = ind(B); k0 = ind(C);
+  if (i0 < 0) i0 = 0; if (i0 >= N) i0 = N-1;
+  if (j0 < 0) j0 = 0; if (j0 >= N) j0 = N-1;
+  if (k0 < 0) k0 = 0; if (k0 >= N) k0 = N-1;
+#endif
+
 //  clear_array(states);
   printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
   printf("The following pictures show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
@@ -107,7 +134,7 @@ int main() {
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
   printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
 
-  printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles for\n");
+  printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
   printf("in the paper is presumed here.)\n\n");
@@ -161,18 +188,10 @@ int main() {
 #endif
 #endif
         ) states[i][j][k] += 2;
-#ifdef SHOW_CUTOFFS
-        if (fabs(alpha-A) < .015)    states[i][j][k] = 10;
-        if (fabs( beta-B) < .015)    states[i][j][k] = 10;
-        if (fabs(gamma-C) < .015)    states[i][j][k] = 10;
-//      if (fabs(alpha-pi+A) < .015) states[i][j][k] = 10;
-//      if (fabs( beta-pi+B) < .015) states[i][j][k] = 10;
-//      if (fabs(gamma-pi+C) < .015) states[i][j][k] = 10;
-#endif
   }
 
   // Show slices of the array, indicating the nature of each cell.
-  show_array(states);
+  show_array(states, i0, j0, k0);
 
   // Compute and display statistices for the given triangle ABC.
   total = count0 = count1 = count2 = count3 = 0;
