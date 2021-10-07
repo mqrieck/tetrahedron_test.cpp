@@ -21,7 +21,6 @@
 #include <cmath>
 #include <cstdlib>
 #include <ncurses.h>
-#include <time.h>
 
 #define M 800                 // how many (alpha, beta, gamma) points (M^3)?
 #define N 60                  // how fine to subdivide the interval [0, pi]
