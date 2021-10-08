@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/7/2021)
+// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/8/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -28,8 +28,8 @@
 #define pi M_PI               // pi = 3.141592654..., of course
 #define ACUTE_TEST            // only appropriate for acute base triangle ABC
 //#define COSINES_TEST        // include the "cosines test" when using an acute triangle
-#define STARTX 20
-#define STARTY 3
+#define STARTX 20             // horizontal start of displayed character grid
+#define STARTY 3              // vertical start of displayed character grid
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
@@ -64,7 +64,7 @@ inline int ind(double angle) {
 int main(int argc, char **argv) {
 
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, choice;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.03;
   char ch, chars[N][N][N];
   bool all_done;
 
@@ -108,14 +108,14 @@ int main(int argc, char **argv) {
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
-  printf("in the paper is presumed here.)\n\n");
+  printf("in the research paper that this program supports is presumed here.)\n\n");
 
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
 
-  printf("PLEASE WAIT until data is generated....\n\n\n\n");
+  printf("PLEASE WAIT while data is being generated....\n\n\n\n\n");
 
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
@@ -169,7 +169,6 @@ int main(int argc, char **argv) {
           case 3: chars[i][j][k] = 'o'; break;
         }
   }
-
         initscr();
         start_color();
         init_pair(1, COLOR_WHITE, COLOR_BLACK);
