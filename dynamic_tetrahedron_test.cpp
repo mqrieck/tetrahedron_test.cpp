@@ -228,6 +228,9 @@ int main(int argc, char **argv) {
           alpha = (i+.5)*pi/N;
           attron(COLOR_PAIR(1));
           mvprintw(STARTY+ 4, STARTX+2*N+3, "alpha = %.4f", alpha);
+	  if (alpha == A) mvprintw(STARTY+ 4, STARTX+2*N+20, "= A");
+	  if (alpha  < A) mvprintw(STARTY+ 4, STARTX+2*N+20, "< A");
+	  if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
           for(j=0, x=STARTX; j < N; j++, x+=2)
             for(k=0, y=STARTY; k < N; k++, y++) {
               if (chars[i][j][k] == '.') attron(COLOR_PAIR(3));
