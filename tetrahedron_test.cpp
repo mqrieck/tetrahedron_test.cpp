@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/6/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/15/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -127,7 +127,7 @@ int main(int argc, char **argv) {
 
 //  clear_array(states);
   printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
-  printf("The following pictures show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
+  printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
@@ -174,17 +174,17 @@ int main(int argc, char **argv) {
           alpha +  beta - gamma < 2*(A+B)
 #ifdef ACUTE_TEST
 &&
-          (alpha > A || beta  < B || beta  < C + alpha) &&
-          (alpha > A || gamma < C || gamma < B + alpha) &&
-          (beta  > B || gamma < C || gamma < A + beta ) &&
-          (beta  > B || alpha < A || alpha < C + beta ) &&
-          (gamma > C || alpha < A || alpha < B + gamma) &&
-          (gamma > C || beta  < B || beta  < A + gamma)
+          (alpha >= A || beta  < B || beta  < C + alpha) &&
+          (alpha >= A || gamma < C || gamma < B + alpha) &&
+          (beta  >= B || gamma < C || gamma < A + beta ) &&
+          (beta  >= B || alpha < A || alpha < C + beta ) &&
+          (gamma >= C || alpha < A || alpha < B + gamma) &&
+          (gamma >= C || beta  < B || beta  < A + gamma)
 #ifdef COSINES_TEST
 &&
-          (alpha > A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
-          (beta  > B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
-          (gamma > C || cosB * cos_alpha + cosA * cos_beta  > 0)
+          (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
+          (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
+          (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #endif
         ) states[i][j][k] += 2;
