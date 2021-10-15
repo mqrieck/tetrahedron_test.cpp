@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/8/2021)
+// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/15/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -22,14 +22,14 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 600                 // how many (alpha, beta, gamma) points (M^3)?
-#define N 60                  // how fine to subdivide the interval [0, pi]
-#define O 1                   // set higher to avoid low "tilt planes"
-#define pi M_PI               // pi = 3.141592654..., of course
-#define ACUTE_TEST            // only appropriate for acute base triangle ABC
-#define COSINES_TEST          // include the "cosines test" when using an acute triangle
-#define STARTX 20             // horizontal start of displayed character grid
-#define STARTY 3              // vertical start of displayed character grid
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 70                    // how fine to subdivide the interval [0, pi]
+#define O 0                     // set higher to avoid low "tilt planes"
+#define pi M_PI                 // pi = 3.141592654..., of course
+#define ACUTE_TEST              // only appropriate for acute base triangle ABC
+//#define COSINES_TEST          // include the "cosines test" when using an acute triangle
+#define STARTX 2                // horizontal start of displayed character grid
+#define STARTY 2                // vertical start of displayed character grid
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
@@ -98,7 +98,7 @@ int main(int argc, char **argv) {
   if (k0 < 0) k0 = 0; if (k0 >= N) k0 = N-1;
 
   printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
-  printf("The following pictures show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
+  printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
@@ -137,27 +137,27 @@ int main(int argc, char **argv) {
         if (
           alpha +  beta + gamma < 2*pi &&
           alpha <  beta + gamma &&
-           beta < gamma + alpha &&
+          beta  < gamma + alpha &&
           gamma < alpha +  beta &&
           A + beta + gamma  < 2*pi &&
           alpha + B + gamma < 2*pi &&
           alpha + beta + C  < 2*pi &&
-           beta + gamma - alpha < 2*(B+C) &&
+          beta  + gamma - alpha < 2*(B+C) &&
           gamma + alpha -  beta < 2*(C+A) &&
           alpha +  beta - gamma < 2*(A+B)
 #ifdef ACUTE_TEST
 &&
-          (alpha > A || beta  < B || beta  < C + alpha) &&
-          (alpha > A || gamma < C || gamma < B + alpha) &&
-          (beta  > B || gamma < C || gamma < A + beta ) &&
-          (beta  > B || alpha < A || alpha < C + beta ) &&
-          (gamma > C || alpha < A || alpha < B + gamma) &&
-          (gamma > C || beta  < B || beta  < A + gamma)
+          (alpha >= A || beta  < B || beta  < C + alpha) &&
+          (alpha >= A || gamma < C || gamma < B + alpha) &&
+          (beta  >= B || gamma < C || gamma < A + beta ) &&
+          (beta  >= B || alpha < A || alpha < C + beta ) &&
+          (gamma >= C || alpha < A || alpha < B + gamma) &&
+          (gamma >= C || beta  < B || beta  < A + gamma)
 #ifdef COSINES_TEST
 &&
-          (alpha > A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
-          (beta  > B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
-          (gamma > C || cosB * cos_alpha + cosA * cos_beta  > 0)
+          (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
+          (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
+          (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #endif
         ) states[i][j][k] += 2;
@@ -205,7 +205,8 @@ int main(int argc, char **argv) {
         mvprintw(STARTY+22, STARTX+2*N+3, "e. cos C cos beta + cos B cos gamma = 0");
         mvprintw(STARTY+23, STARTX+2*N+3, "f. cos A cos gamma + cos C cos alpha = 0");
         mvprintw(STARTY+24, STARTX+2*N+3, "g. cos B cos alpha + cos A cos beta = 0");
-        mvprintw(STARTY+26, STARTX+2*N+3, "Press the escape key to quit.");
+        mvprintw(STARTY+25, STARTX+2*N+3, "h. (alpha+B-C) beta + (alpha+C-B) gamma = alpha(alpha+B+C)");
+        mvprintw(STARTY+27, STARTX+2*N+3, "Press the escape key to quit.");
         all_done = false;
         choice = i = 0;
 
@@ -229,6 +230,7 @@ int main(int argc, char **argv) {
           if (ch == 'e') choice = 14;
           if (ch == 'f') choice = 15;
           if (ch == 'g') choice = 16;
+          if (ch == 'h') choice = 17;
           if (ch == 27) all_done = true;
           alpha = (i+.5)*pi/N;
           attron(COLOR_PAIR(1));
@@ -307,6 +309,9 @@ int main(int argc, char **argv) {
                       mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                       break;
                    case 16: if (fabs(cos(B)*cos(alpha) + cos(A)*cos(beta)) < tol/2) {
+                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                      break;
+                   case 17: if (fabs((alpha+B-C)*beta + (alpha+C-B)*gamma - alpha*(alpha+B+C)) < tol) {
                       mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                       break;
                 }
