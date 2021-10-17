@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/15/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/17/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -15,11 +15,11 @@
 
 #define M 1100                // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                 // how fine to subdivide the interval [0, pi]
-#define O 1                   // set higher to avoid low "tilt planes"
+#define O 0                   // set higher to avoid low "tilt planes"
 #define pi M_PI               // pi = 3.141592654..., of course
 #define ACUTE_TEST            // only appropriate for acute base triangle ABC
 //#define COSINES_TEST        // include the "cosines test" when using an acute triangle
-#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
+//#define SHOW_CUTOFFS        // show when alpha = A, beta = B or gamma = C
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
