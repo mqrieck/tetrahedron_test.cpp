@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/15/2021)
+// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/17/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -67,7 +67,6 @@ int main(int argc, char **argv) {
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.03;
   char ch, chars[N][N][N];
   bool all_done;
-
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -161,7 +160,6 @@ int main(int argc, char **argv) {
 #endif
 #endif
         ) states[i][j][k] += 2;
-
         switch(states[i][j][k]) {
           case 0: chars[i][j][k] = '.'; break;
           case 1: chars[i][j][k] = 'x'; break;
@@ -169,158 +167,156 @@ int main(int argc, char **argv) {
           case 3: chars[i][j][k] = 'o'; break;
         }
   }
-        initscr();
-        start_color();
-        init_pair(1, COLOR_WHITE, COLOR_BLACK);
-        init_pair(2, COLOR_BLUE,  COLOR_WHITE);
-        init_pair(3, COLOR_RED,   COLOR_WHITE);
-        init_pair(4, COLOR_GREEN, COLOR_WHITE);
-        init_pair(5, COLOR_BLACK, COLOR_WHITE);
-        curs_set(0);
-        cbreak();
-        noecho();
-        keypad(stdscr,TRUE);
-        attron(COLOR_PAIR(1));
-        printf("\033[2J"); // Clears the screen! Uncomment for GNU. Comment for VC++ 
-        nodelay(stdscr,TRUE);
-        attron(COLOR_PAIR(1));
-        mvprintw(STARTY   , STARTX+2*N+3, "A = %.4f", A);
-        mvprintw(STARTY+ 1, STARTX+2*N+3, "B = %.4f", B);
-        mvprintw(STARTY+ 2, STARTX+2*N+3, "C = %.4f", C);
-        mvprintw(STARTY+ 6, STARTX+2*N+3, "Use up and down arrow keys to view different slices.");
-        mvprintw(STARTY+ 7, STARTX+2*N+3, "You can also select to display one of these bounding lines/curves:");
-        mvprintw(STARTY+ 9, STARTX+2*N+3, "1. beta = B");
-        mvprintw(STARTY+10, STARTX+2*N+3, "2. gamma = C");
-        mvprintw(STARTY+11, STARTX+2*N+3, "3. beta + gamma = 2 pi - alpha");
-        mvprintw(STARTY+12, STARTX+2*N+3, "4. beta + gamma = alpha");
-        mvprintw(STARTY+13, STARTX+2*N+3, "5. beta - gamma = alpha");
-        mvprintw(STARTY+14, STARTX+2*N+3, "6. gamma - beta = alpha");
-        mvprintw(STARTY+15, STARTX+2*N+3, "7. beta + gamma = 2 pi - A");
-        mvprintw(STARTY+16, STARTX+2*N+3, "8. beta = 2 pi - alpha - C");
-        mvprintw(STARTY+17, STARTX+2*N+3, "9. gamma = 2 pi - alpha - B");
-        mvprintw(STARTY+18, STARTX+2*N+3, "a. beta = C + alpha");
-        mvprintw(STARTY+19, STARTX+2*N+3, "b. gamma = B + alpha");
-        mvprintw(STARTY+20, STARTX+2*N+3, "c. beta - gamma = A");
-        mvprintw(STARTY+21, STARTX+2*N+3, "d. gamma - beta = A");
-        mvprintw(STARTY+22, STARTX+2*N+3, "e. cos C cos beta + cos B cos gamma = 0");
-        mvprintw(STARTY+23, STARTX+2*N+3, "f. cos A cos gamma + cos C cos alpha = 0");
-        mvprintw(STARTY+24, STARTX+2*N+3, "g. cos B cos alpha + cos A cos beta = 0");
-        mvprintw(STARTY+25, STARTX+2*N+3, "h. (alpha+B-C) beta + (alpha+C-B) gamma = alpha(alpha+B+C)");
-        mvprintw(STARTY+27, STARTX+2*N+3, "Press the escape key to quit.");
-        all_done = false;
-        choice = i = 0;
-
-        do {
-          int ch = getch();
-          if (ch == KEY_DOWN) { i = i>0   ? i-1 : i; choice = 0; }
-          if (ch == KEY_UP)   { i = i<N-2 ? i+1 : i; choice = 0; }
-          if (ch == '1') choice =  1;
-          if (ch == '2') choice =  2;
-          if (ch == '3') choice =  3;
-          if (ch == '4') choice =  4;
-          if (ch == '5') choice =  5;
-          if (ch == '6') choice =  6;
-          if (ch == '7') choice =  7;
-          if (ch == '8') choice =  8;
-          if (ch == '9') choice =  9;
-          if (ch == 'a') choice = 10;
-          if (ch == 'b') choice = 11;
-          if (ch == 'c') choice = 12;
-          if (ch == 'd') choice = 13;
-          if (ch == 'e') choice = 14;
-          if (ch == 'f') choice = 15;
-          if (ch == 'g') choice = 16;
-          if (ch == 'h') choice = 17;
-          if (ch == 27) all_done = true;
-          alpha = (i+.5)*pi/N;
-          attron(COLOR_PAIR(1));
-          mvprintw(STARTY+ 4, STARTX+2*N+3, "alpha = %.4f", alpha);
-	  if (alpha == A) mvprintw(STARTY+ 4, STARTX+2*N+20, "= A");
-	  if (alpha  < A) mvprintw(STARTY+ 4, STARTX+2*N+20, "< A");
-	  if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
-          for(j=0, x=STARTX; j < N; j++, x+=2)
-            for(k=0, y=STARTY; k < N; k++, y++) {
-              if (chars[i][j][k] == '.') attron(COLOR_PAIR(3));
-                else if (chars[i][j][k] == 'x') attron(COLOR_PAIR(4));
-                   else attron(COLOR_PAIR(2));
-              mvprintw(y,x  ,"%c",chars[i][j][k]);
-              mvprintw(y,x+1,"%c",chars[i][j][k]);
-            }
-          if (choice == 1) {
-            attron(COLOR_PAIR(5));
-            x = STARTX + 2*j0;
-            for(k=0, y=STARTY; k < N; k++, y++) {
-              mvprintw(y,x  ,"%c",'%');
-              mvprintw(y,x+1,"%c",'%');
-            }
+  initscr();
+  start_color();
+  init_pair(1, COLOR_WHITE, COLOR_BLACK);
+  init_pair(2, COLOR_BLUE,  COLOR_WHITE);
+  init_pair(3, COLOR_RED,   COLOR_WHITE);
+  init_pair(4, COLOR_GREEN, COLOR_WHITE);
+  init_pair(5, COLOR_BLACK, COLOR_WHITE);
+  curs_set(0);
+  cbreak();
+  noecho();
+  keypad(stdscr,TRUE);
+  attron(COLOR_PAIR(1));
+  printf("\033[2J"); // Clears the screen! Uncomment for Unix(-like). Comment out for VC++.
+  nodelay(stdscr,TRUE);
+  attron(COLOR_PAIR(1));
+  mvprintw(STARTY   , STARTX+2*N+3, "A = %.4f", A);
+  mvprintw(STARTY+ 1, STARTX+2*N+3, "B = %.4f", B);
+  mvprintw(STARTY+ 2, STARTX+2*N+3, "C = %.4f", C);
+  mvprintw(STARTY+ 6, STARTX+2*N+3, "Use up and down arrow keys to view different slices.");
+  mvprintw(STARTY+ 7, STARTX+2*N+3, "You can also select to display one of these bounding lines/curves:");
+  mvprintw(STARTY+ 9, STARTX+2*N+3, "1. beta = B");
+  mvprintw(STARTY+10, STARTX+2*N+3, "2. gamma = C");
+  mvprintw(STARTY+11, STARTX+2*N+3, "3. beta + gamma = 2 pi - alpha");
+  mvprintw(STARTY+12, STARTX+2*N+3, "4. beta + gamma = alpha");
+  mvprintw(STARTY+13, STARTX+2*N+3, "5. beta - gamma = alpha");
+  mvprintw(STARTY+14, STARTX+2*N+3, "6. gamma - beta = alpha");
+  mvprintw(STARTY+15, STARTX+2*N+3, "7. beta + gamma = 2 pi - A");
+  mvprintw(STARTY+16, STARTX+2*N+3, "8. beta = 2 pi - alpha - C");
+  mvprintw(STARTY+17, STARTX+2*N+3, "9. gamma = 2 pi - alpha - B");
+  mvprintw(STARTY+18, STARTX+2*N+3, "a. beta = C + alpha");
+  mvprintw(STARTY+19, STARTX+2*N+3, "b. gamma = B + alpha");
+  mvprintw(STARTY+20, STARTX+2*N+3, "c. beta - gamma = A");
+  mvprintw(STARTY+21, STARTX+2*N+3, "d. gamma - beta = A");
+  mvprintw(STARTY+22, STARTX+2*N+3, "e. cos C cos beta + cos B cos gamma = 0");
+  mvprintw(STARTY+23, STARTX+2*N+3, "f. cos A cos gamma + cos C cos alpha = 0");
+  mvprintw(STARTY+24, STARTX+2*N+3, "g. cos B cos alpha + cos A cos beta = 0");
+  mvprintw(STARTY+25, STARTX+2*N+3, "h. (alpha+B-C) beta + (alpha+C-B) gamma = alpha(alpha+B+C)");
+  mvprintw(STARTY+27, STARTX+2*N+3, "Press the escape key to quit.");
+  all_done = false;
+  choice = i = 0;
+  do {
+    int ch = getch();
+    if (ch == KEY_DOWN) { i = i>0   ? i-1 : i; choice = 0; }
+    if (ch == KEY_UP)   { i = i<N-2 ? i+1 : i; choice = 0; }
+    if (ch == '1') choice =  1;
+    if (ch == '2') choice =  2;
+    if (ch == '3') choice =  3;
+    if (ch == '4') choice =  4;
+    if (ch == '5') choice =  5;
+    if (ch == '6') choice =  6;
+    if (ch == '7') choice =  7;
+    if (ch == '8') choice =  8;
+    if (ch == '9') choice =  9;
+    if (ch == 'a') choice = 10;
+    if (ch == 'b') choice = 11;
+    if (ch == 'c') choice = 12;
+    if (ch == 'd') choice = 13;
+    if (ch == 'e') choice = 14;
+    if (ch == 'f') choice = 15;
+    if (ch == 'g') choice = 16;
+    if (ch == 'h') choice = 17;
+    if (ch == 27) all_done = true;
+    alpha = (i+.5)*pi/N;
+    attron(COLOR_PAIR(1));
+    mvprintw(STARTY+ 4, STARTX+2*N+3, "alpha = %.4f", alpha);
+    if (alpha == A) mvprintw(STARTY+ 4, STARTX+2*N+20, "= A");
+    if (alpha  < A) mvprintw(STARTY+ 4, STARTX+2*N+20, "< A");
+    if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
+    for(j=0, x=STARTX; j < N; j++, x+=2)
+      for(k=0, y=STARTY; k < N; k++, y++) {
+        if (chars[i][j][k] == '.') attron(COLOR_PAIR(3));
+          else if (chars[i][j][k] == 'x') attron(COLOR_PAIR(4));
+            else attron(COLOR_PAIR(2));
+        mvprintw(y,x  ,"%c",chars[i][j][k]);
+        mvprintw(y,x+1,"%c",chars[i][j][k]);
+      }
+    if (choice == 1) {
+      attron(COLOR_PAIR(5));
+      x = STARTX + 2*j0;
+      for(k=0, y=STARTY; k < N; k++, y++) {
+         mvprintw(y,x  ,"%c",'%');
+         mvprintw(y,x+1,"%c",'%');
+      }
+    }
+    if (choice == 2) {
+      attron(COLOR_PAIR(5));
+      y = STARTY + k0;
+      for(j=0, x=STARTX; j < N; j++, x+=2) {
+        mvprintw(y,x  ,"%c",'%');
+        mvprintw(y,x+1,"%c",'%');
+      }
+    }
+    if (choice >= 3) {
+      attron(COLOR_PAIR(5));
+      for(j=0, x=STARTX; j < N; j++, x+=2) {
+        beta = (j+.5)*pi/N;
+        for(k=0, y=STARTY; k < N; k++, y++) {
+          gamma = (k+.5)*pi/N;
+          switch(choice) {
+             case 3: if (fabs(alpha + beta + gamma - 2*pi) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case  4: if (fabs(beta + gamma - alpha) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case  5: if (fabs(gamma + alpha - beta) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case  6: if (fabs(alpha + beta - gamma) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case  7: if (fabs(A + beta + gamma - 2*pi) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case  8: if (fabs(alpha + B + gamma - 2*pi) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case  9: if (fabs(alpha + beta + C - 2*pi) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 10: if (fabs(alpha - beta + C) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 11: if (fabs(alpha + B - gamma) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 12: if (fabs(A - beta + gamma) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 13: if (fabs(A + beta - gamma) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 14: if (fabs(cos(C)*cos(beta) + cos(B)*cos(gamma)) < tol/2) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 15: if (fabs(cos(A)*cos(gamma) + cos(C)*cos(alpha)) < tol/2) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 16: if (fabs(cos(B)*cos(alpha) + cos(A)*cos(beta)) < tol/2) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
+             case 17: if (fabs((alpha+B-C)*beta + (alpha+C-B)*gamma - alpha*(alpha+B+C)) < tol) {
+                mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
+                break;
           }
-          if (choice == 2) {
-            attron(COLOR_PAIR(5));
-            y = STARTY + k0;
-            for(j=0, x=STARTX; j < N; j++, x+=2) {
-              mvprintw(y,x  ,"%c",'%');
-              mvprintw(y,x+1,"%c",'%');
-            }
-          }
-          if (choice >= 3) {
-            attron(COLOR_PAIR(5));
-            for(j=0, x=STARTX; j < N; j++, x+=2) {
-              beta = (j+.5)*pi/N;
-              for(k=0, y=STARTY; k < N; k++, y++) {
-                gamma = (k+.5)*pi/N;
-                switch(choice) {
-                   case 3: if (fabs(alpha + beta + gamma - 2*pi) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case  4: if (fabs(beta + gamma - alpha) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case  5: if (fabs(gamma + alpha - beta) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case  6: if (fabs(alpha + beta - gamma) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case  7: if (fabs(A + beta + gamma - 2*pi) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case  8: if (fabs(alpha + B + gamma - 2*pi) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case  9: if (fabs(alpha + beta + C - 2*pi) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 10: if (fabs(alpha - beta + C) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 11: if (fabs(alpha + B - gamma) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 12: if (fabs(A - beta + gamma) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 13: if (fabs(A + beta - gamma) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 14: if (fabs(cos(C)*cos(beta) + cos(B)*cos(gamma)) < tol/2) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 15: if (fabs(cos(A)*cos(gamma) + cos(C)*cos(alpha)) < tol/2) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 16: if (fabs(cos(B)*cos(alpha) + cos(A)*cos(beta)) < tol/2) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                   case 17: if (fabs((alpha+B-C)*beta + (alpha+C-B)*gamma - alpha*(alpha+B+C)) < tol) {
-                      mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
-                      break;
-                }
-              }
-            }
-          }
-	  refresh();
-        } while (!all_done);
-
-	attroff(COLOR_PAIR(1));
-        endwin();
+        }
+      }
+    }
+    refresh();
+  } while (!all_done);
+  attroff(COLOR_PAIR(1));
+  endwin();
 }
