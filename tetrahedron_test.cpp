@@ -10,11 +10,14 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
+//#include <cstdio>
+//#include <cmath>
 #include <cstdio>
+#include <cstdlib>
 #include <cmath>
 
-#define M 1100                // how many (alpha, beta, gamma) points (M^3)?
-#define N 100                 // how fine to subdivide the interval [0, pi]
+#define M 700                 // how many (alpha, beta, gamma) points (M^3)?
+#define N 70                  // how fine to subdivide the interval [0, pi]
 #define O 0                   // set higher to avoid low "tilt planes"
 #define pi M_PI               // pi = 3.141592654..., of course
 #define ACUTE_TEST            // only appropriate for acute base triangle ABC
@@ -24,6 +27,9 @@
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
 // beta and gamma, at the point of intersection of the three planes.
+
+using namespace std;
+
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
     double cos_tau1, cos_tau2, cos_tau3, sin_tau1, sin_tau2, sin_tau3;
