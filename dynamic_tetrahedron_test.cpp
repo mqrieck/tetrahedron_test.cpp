@@ -66,7 +66,7 @@ inline int ind(double angle) {
 int main(int argc, char **argv) {
 
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, choice;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.03;
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
   char ch, chars[N][N][N];
   bool all_done;
   // Set the angles for the base triangle ABC
