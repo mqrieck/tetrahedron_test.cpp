@@ -22,14 +22,16 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 70                    // how fine to subdivide the interval [0, pi]
+#define M 500                   // how many (alpha, beta, gamma) points (M^3)?
+#define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
 //#define COSINES_TEST          // include the "cosines test" when using an acute triangle
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
+
+using namespace std;
 
 // The tau's are "tilt angles" for three planes, each containing one of the sidelines of
 // the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
