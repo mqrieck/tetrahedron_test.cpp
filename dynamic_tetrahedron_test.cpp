@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/17/2021)
+// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/29/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -187,26 +187,30 @@ int main(int argc, char **argv) {
   mvprintw(STARTY   , STARTX+2*N+3, "A = %.4f", A);
   mvprintw(STARTY+ 1, STARTX+2*N+3, "B = %.4f", B);
   mvprintw(STARTY+ 2, STARTX+2*N+3, "C = %.4f", C);
-  mvprintw(STARTY+ 6, STARTX+2*N+3, "Use up and down arrow keys to view different slices.");
-  mvprintw(STARTY+ 7, STARTX+2*N+3, "You can also select to display one of these bounding lines/curves:");
-  mvprintw(STARTY+ 9, STARTX+2*N+3, "1. beta = B");
-  mvprintw(STARTY+10, STARTX+2*N+3, "2. gamma = C");
-  mvprintw(STARTY+11, STARTX+2*N+3, "3. beta + gamma = 2 pi - alpha");
-  mvprintw(STARTY+12, STARTX+2*N+3, "4. beta + gamma = alpha");
-  mvprintw(STARTY+13, STARTX+2*N+3, "5. beta - gamma = alpha");
-  mvprintw(STARTY+14, STARTX+2*N+3, "6. gamma - beta = alpha");
-  mvprintw(STARTY+15, STARTX+2*N+3, "7. beta + gamma = 2 pi - A");
-  mvprintw(STARTY+16, STARTX+2*N+3, "8. beta = 2 pi - alpha - C");
-  mvprintw(STARTY+17, STARTX+2*N+3, "9. gamma = 2 pi - alpha - B");
-  mvprintw(STARTY+18, STARTX+2*N+3, "a. beta = C + alpha");
-  mvprintw(STARTY+19, STARTX+2*N+3, "b. gamma = B + alpha");
-  mvprintw(STARTY+20, STARTX+2*N+3, "c. beta - gamma = A");
-  mvprintw(STARTY+21, STARTX+2*N+3, "d. gamma - beta = A");
-  mvprintw(STARTY+22, STARTX+2*N+3, "e. cos C cos beta + cos B cos gamma = 0");
-  mvprintw(STARTY+23, STARTX+2*N+3, "f. cos A cos gamma + cos C cos alpha = 0");
-  mvprintw(STARTY+24, STARTX+2*N+3, "g. cos B cos alpha + cos A cos beta = 0");
-  mvprintw(STARTY+25, STARTX+2*N+3, "h. (alpha+B-C) beta + (alpha+C-B) gamma = alpha(alpha+B+C)");
-  mvprintw(STARTY+27, STARTX+2*N+3, "Press the escape key to quit.");
+  mvprintw(STARTY+ 6, STARTX+2*N+3, "Use up and down arrow keys to view different slices of the bounding region.");
+  mvprintw(STARTY+ 7, STARTX+2*N+3, "Dots are outside the bounding region; spaces are inside but without data");
+  mvprintw(STARTY+ 8, STARTX+2*N+3, "points to bound; o's are inside and contain data points; x's are subtle.");
+  mvprintw(STARTY+10, STARTX+2*N+3, "Use up and down arrow keys to view different slices of bounding region.");
+  mvprintw(STARTY+11, STARTX+2*N+3, "You can also select to display one of these bounding lines/curves");
+  mvprintw(STARTY+12, STARTX+2*N+3, "(imperfectly rendered):");
+  mvprintw(STARTY+14, STARTX+2*N+3, "1. beta = B");
+  mvprintw(STARTY+15, STARTX+2*N+3, "2. gamma = C");
+  mvprintw(STARTY+16, STARTX+2*N+3, "3. beta + gamma = 2 pi - alpha");
+  mvprintw(STARTY+17, STARTX+2*N+3, "4. beta + gamma = alpha");
+  mvprintw(STARTY+18, STARTX+2*N+3, "5. beta - gamma = alpha");
+  mvprintw(STARTY+19, STARTX+2*N+3, "6. gamma - beta = alpha");
+  mvprintw(STARTY+20, STARTX+2*N+3, "7. beta + gamma = 2 pi - A");
+  mvprintw(STARTY+21, STARTX+2*N+3, "8. beta = 2 pi - alpha - C");
+  mvprintw(STARTY+22, STARTX+2*N+3, "9. gamma = 2 pi - alpha - B");
+  mvprintw(STARTY+23, STARTX+2*N+3, "a. beta = C + alpha");
+  mvprintw(STARTY+24, STARTX+2*N+3, "b. gamma = B + alpha");
+  mvprintw(STARTY+25, STARTX+2*N+3, "c. beta - gamma = A");
+  mvprintw(STARTY+26, STARTX+2*N+3, "d. gamma - beta = A");
+  mvprintw(STARTY+27, STARTX+2*N+3, "e. cos C cos beta + cos B cos gamma = 0");
+  mvprintw(STARTY+28, STARTX+2*N+3, "f. cos A cos gamma + cos C cos alpha = 0");
+  mvprintw(STARTY+29, STARTX+2*N+3, "g. cos B cos alpha + cos A cos beta = 0");
+  mvprintw(STARTY+30, STARTX+2*N+3, "h. (alpha+B-C) beta + (alpha+C-B) gamma = alpha(alpha+B+C)");
+  mvprintw(STARTY+32, STARTX+2*N+3, "Press the escape key to quit.");
   all_done = false;
   choice = i = 0;
   do {
