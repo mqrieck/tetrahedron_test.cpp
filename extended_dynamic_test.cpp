@@ -80,7 +80,8 @@ int main(int argc, char **argv) {
   } else {
   // Or else specify the proportions here
   //   Acute triangles:
-    A =  8;  B =  6;  C =  5;
+    A = B = C = 1;
+//  A =  8;  B =  6;  C =  5;
 //  A =  4;  B =  6;  C =  9;
 //  A =  5;  B =  7;  C =  7;
 //  A =  9;  B =  9;  C =  1;
