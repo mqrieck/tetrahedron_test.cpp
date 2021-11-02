@@ -1,7 +1,7 @@
 
-// extended_dynamic_test.cpp (by M. Q. Rieck, updated: 11/1/2021)
+// extended_dynamic_test.cpp (by M. Q. Rieck, updated: 11/2/2021)
 
-// Note: This is test code for the results in my "tetrahedron and toroids" paper.
+// Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
 // Note: Need the ncurses library, and should be able to compile at the command line
 // using something like this:
@@ -12,7 +12,7 @@
 //
 // (Will need sufficiently large virtual terminal screen and/or small enough font.)
 
-// Note: Can use three command line integer parameters to specify proportion A:B:C.
+// Note: Can use three command line integer parameters to specify angle proportion A:B:C.
 
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
@@ -22,8 +22,8 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 500                   // how many (alpha, beta, gamma) points (M^3)?
-#define N 50                    // how fine to subdivide the interval [0, pi]
+#define M 1200                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
   double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3, eta_sq, L, R, E, D;
   char ch, chars[N][N][N];
-  bool all_done, flags[N][N][N];
+  bool all_done, flags1[N][N][N], flags2[N][N][N];
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -113,7 +113,6 @@ int main(int argc, char **argv) {
   y2 = x20 * sin_turn + y20 * cos_turn;
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
-
 
   printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
@@ -192,20 +191,22 @@ int main(int argc, char **argv) {
 	R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
         E = L*L + (R+1)*(R+1);
         D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
-//      flags[i][j][k] = (D < 0);
-//      flags[i][j][k] = (eta_sq < 0);
-        flags[i][j][k] = (eta_sq < 0 || D < 0);
+        flags1[i][j][k] = (eta_sq < 0);
+        flags2[i][j][k] = (D < 0);
   }
   initscr();
   start_color();
-  init_pair(1, COLOR_WHITE,   COLOR_BLACK);
-  init_pair(2, COLOR_BLUE,    COLOR_YELLOW);
-  init_pair(3, COLOR_RED,     COLOR_YELLOW);
-  init_pair(4, COLOR_GREEN,   COLOR_YELLOW);
-  init_pair(5, COLOR_BLACK,   COLOR_WHITE);
-  init_pair(6, COLOR_BLUE,    COLOR_CYAN);
-  init_pair(7, COLOR_RED,     COLOR_CYAN);
-  init_pair(8, COLOR_GREEN,   COLOR_CYAN);
+  init_pair(1,  COLOR_WHITE,   COLOR_BLACK);
+  init_pair(2,  COLOR_BLUE,    COLOR_YELLOW);
+  init_pair(3,  COLOR_RED,     COLOR_YELLOW);
+  init_pair(4,  COLOR_GREEN,   COLOR_YELLOW);
+  init_pair(5,  COLOR_BLACK,   COLOR_WHITE);
+  init_pair(6,  COLOR_BLUE,    COLOR_CYAN);
+  init_pair(7,  COLOR_RED,     COLOR_CYAN);
+  init_pair(8,  COLOR_GREEN,   COLOR_CYAN);
+  init_pair(9,  COLOR_BLUE,    COLOR_MAGENTA);
+  init_pair(10, COLOR_RED,     COLOR_MAGENTA);
+  init_pair(11, COLOR_GREEN,   COLOR_MAGENTA);
 
   curs_set(0);
   cbreak();
@@ -275,11 +276,14 @@ int main(int argc, char **argv) {
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
         if (chars[i][j][k] == '.')
-          {if (flags[i][j][k]) attron(COLOR_PAIR(7)); else attron(COLOR_PAIR(3));}
+          {if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else 
+            if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else attron(COLOR_PAIR(3));}
           else if (chars[i][j][k] == 'x')
-            {if (flags[i][j][k]) attron(COLOR_PAIR(8)); else attron(COLOR_PAIR(4));}
+            {if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else 
+              if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else attron(COLOR_PAIR(4));}
             else
-              {if (flags[i][j][k]) attron(COLOR_PAIR(6)); else attron(COLOR_PAIR(2));}
+              {if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else 
+                if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else attron(COLOR_PAIR(2));}
         mvprintw(y,x  ,"%c",chars[i][j][k]);
         mvprintw(y,x+1,"%c",chars[i][j][k]);
       }
