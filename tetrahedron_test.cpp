@@ -5,7 +5,7 @@
 
 // Note: Recommend redirecting the output to a file, and scrolling through that file.
 
-// Note: Can use three command line integer parameters to specify proportion A:B:C.
+// Note: Can use three command line integer parameters to specify angle proportion A:B:C.
 
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
@@ -110,7 +110,8 @@ int main(int argc, char **argv) {
   } else {
   // Or else specify the proportions here
   //   Acute triangles:
-    A =  8;  B =  6;  C =  5;
+    A = B = C = 1;
+//  A =  8;  B =  6;  C =  5;
 //  A =  4;  B =  6;  C =  9;
 //  A =  5;  B =  7;  C =  7;
 //  A =  9;  B =  9;  C =  1;
