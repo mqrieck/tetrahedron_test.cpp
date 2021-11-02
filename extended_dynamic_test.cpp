@@ -100,11 +100,11 @@ int main(int argc, char **argv) {
   if (j0 < 0) j0 = 0; if (j0 >= N) j0 = N-1;
   if (k0 < 0) k0 = 0; if (k0 >= N) k0 = N-1;
 
-// Assume (x1, y1) = (1, 0) intially
+// Assume control point A = (x1, y1) = (1, 0) intially
   x10 = 1; y10 = 0;
   x20 = cos(2*C); y20 =  sin(2*C);
   x30 = cos(2*B); y30 = -sin(2*B);
-// But not turn all control points
+// But now turn all control points to achieve my standard orientation
   cos_turn = cos(2*(B-C)/3);
   sin_turn = sin(2*(B-C)/3);
   x1 = x10 * cos_turn - y10 * sin_turn;
@@ -184,6 +184,7 @@ int main(int argc, char **argv) {
           case 2: chars[i][j][k] = ' '; break;
           case 3: chars[i][j][k] = 'o'; break;
         }
+        // The following taken from my "Grunert" paper, for discriminant
         c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
         C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
         eta_sq = 1 - C1 - C2 - C3 + 2*C0;
