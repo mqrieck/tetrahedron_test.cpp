@@ -28,6 +28,8 @@
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
 //#define COSINES_TEST          // include the "cosines test" when using an acute triangle
+#define NEW_TESTS		// use new tests based on discriminant
+//#define SHOW_EXTRA            // display some significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -151,6 +153,16 @@ int main(int argc, char **argv) {
         cos_alpha = cos(alpha);
         cos_beta  = cos(beta);
         cos_gamma = cos(gamma);
+        // The following is taken from my "Grunert" paper, for the discriminant D
+        c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
+        C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
+        eta_sq = 1 - C1 - C2 - C3 + 2*C0;
+	L = (2 / eta_sq) * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
+	R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
+        E = L*L + (R+1)*(R+1);
+        D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
+        flags1[i][j][k] = (eta_sq < 0);
+        flags2[i][j][k] = (D < 0);
         if (
           alpha +  beta + gamma < 2*pi &&
           alpha <  beta + gamma &&
@@ -177,6 +189,13 @@ int main(int argc, char **argv) {
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #endif
+#ifdef NEW_TESTS
+&&
+        ( D < 0 || (
+          (alpha >= A || beta <  B || gamma <  C) &&
+          (alpha <  A || beta >= B || gamma <  C) &&
+          (alpha <  A || beta <  B || gamma >= C) ) )
+#endif
         ) states[i][j][k] += 2;
         switch(states[i][j][k]) {
           case 0: chars[i][j][k] = '.'; break;
@@ -184,23 +203,13 @@ int main(int argc, char **argv) {
           case 2: chars[i][j][k] = ' '; break;
           case 3: chars[i][j][k] = 'o'; break;
         }
-        // The following taken from my "Grunert" paper, for discriminant
-        c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
-        C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
-        eta_sq = 1 - C1 - C2 - C3 + 2*C0;
-	L = (2 / eta_sq) * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
-	R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
-        E = L*L + (R+1)*(R+1);
-        D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
-        flags1[i][j][k] = (eta_sq < 0);
-        flags2[i][j][k] = (D < 0);
   }
   initscr();
   start_color();
   init_pair(1,  COLOR_WHITE,   COLOR_BLACK);
-  init_pair(2,  COLOR_BLUE,    COLOR_YELLOW);
-  init_pair(3,  COLOR_RED,     COLOR_YELLOW);
-  init_pair(4,  COLOR_GREEN,   COLOR_YELLOW);
+  init_pair(2,  COLOR_BLUE,    COLOR_WHITE);
+  init_pair(3,  COLOR_RED,     COLOR_WHITE);
+  init_pair(4,  COLOR_GREEN,   COLOR_WHITE);
   init_pair(5,  COLOR_BLACK,   COLOR_WHITE);
   init_pair(6,  COLOR_BLUE,    COLOR_CYAN);
   init_pair(7,  COLOR_RED,     COLOR_CYAN);
@@ -208,6 +217,9 @@ int main(int argc, char **argv) {
   init_pair(9,  COLOR_BLUE,    COLOR_MAGENTA);
   init_pair(10, COLOR_RED,     COLOR_MAGENTA);
   init_pair(11, COLOR_GREEN,   COLOR_MAGENTA);
+  init_pair(12, COLOR_BLUE,    COLOR_YELLOW);
+  init_pair(13, COLOR_RED,     COLOR_YELLOW);
+  init_pair(14, COLOR_GREEN,   COLOR_YELLOW);
 
   curs_set(0);
   cbreak();
@@ -276,15 +288,31 @@ int main(int argc, char **argv) {
     if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
-        if (chars[i][j][k] == '.')
-          {if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else 
-            if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else attron(COLOR_PAIR(3));}
-          else if (chars[i][j][k] == 'x')
-            {if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else 
-              if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else attron(COLOR_PAIR(4));}
-            else
-              {if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else 
-                if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else attron(COLOR_PAIR(2));}
+        if (chars[i][j][k] == '.') {
+#ifdef SHOW_EXTRA
+          if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else 
+          if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else 
+          attron(COLOR_PAIR(13));
+#else
+          attron(COLOR_PAIR(3));
+#endif
+        } else if (chars[i][j][k] == 'x') {
+#ifdef SHOW_EXTRA
+          if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else 
+          if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else
+          attron(COLOR_PAIR(14));
+#else
+          attron(COLOR_PAIR(4));
+#endif
+        } else {
+#ifdef SHOW_EXTRA
+          if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else 
+          if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else 
+          attron(COLOR_PAIR(12));
+#else
+          attron(COLOR_PAIR(2));
+#endif
+        }
         mvprintw(y,x  ,"%c",chars[i][j][k]);
         mvprintw(y,x+1,"%c",chars[i][j][k]);
       }
