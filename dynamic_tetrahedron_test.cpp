@@ -29,7 +29,7 @@
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
 #define COSINES_TEST            // include the "cosines test" when using an acute triangle
 #define NEW_TESTS		// use the new tests based on Grunert's system discriminant
-#define SHOW_EXTRA            // display a couple significant regions
+//#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
