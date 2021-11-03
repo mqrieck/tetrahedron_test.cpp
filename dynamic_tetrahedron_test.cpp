@@ -1,16 +1,16 @@
 
-// dynamic_tetrahedron_test.cpp (by M. Q. Rieck, updated: 10/29/2021)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 11/3/2021)
 
-// Note: This is test code for the results in my "tetrahedron and toroids" paper.
+// Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
 // Note: Need the ncurses library, and should be able to compile at the command line
 // using something like this:
 //
-//     g++ -c dynamic_tetrahedron_test.cpp
-//     g++ dymanic_tetrahedron_test.o -lncurses -o test
+//     g++ -c extended_dynamic_test.cpp
+//     g++ extended_dymanic_test.o -lncurses -o test
 //     ./test
 //
-// (Will need sufficiently large virtual terminal screen and/or small enough font.)
+// (Will need sufficiently large virtual terminal screen and small enough font.)
 
 // Note: Can use three command line integer parameters to specify angle proportion A:B:C.
 
@@ -22,12 +22,14 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 500                   // how many (alpha, beta, gamma) points (M^3)?
-#define N 50                    // how fine to subdivide the interval [0, pi]
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
-//#define COSINES_TEST          // include the "cosines test" when using an acute triangle
+#define COSINES_TEST            // include the "cosines test" when using an acute triangle
+#define NEW_TESTS		// use the new tests based on Grunert's system discriminant
+//#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -64,11 +66,12 @@ inline int ind(double angle) {
 }
 
 int main(int argc, char **argv) {
-
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, choice;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
+  double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3, 
+    eta_sq, L, R, E, D;
   char ch, chars[N][N][N];
-  bool all_done;
+  bool all_done, flags1[N][N][N], flags2[N][N][N];
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -76,29 +79,25 @@ int main(int argc, char **argv) {
     A = atoi(argv[1])*pi / den;
     B = atoi(argv[2])*pi / den;
     C = atoi(argv[3])*pi / den;
-  } else {
-  // Or else specify the proportions here
-  //   Acute triangles:
-    A = B = C = 1;
-//  A =  8;  B =  6;  C =  5;
-//  A =  4;  B =  6;  C =  9;
-//  A =  5;  B =  7;  C =  7;
-//  A =  9;  B =  9;  C =  1;
-//  A =  2;  B =  9;  C =  8;
-//  A =  5;  B =  9;  C =  5;
-  //  Obtuse triangles:
-//  A = 12;  B =  3;  C =  4;
-//  A =  4;  B =  3;  C = 12;
-//  A =  5;  B = 10;  C =  4;
-    den = A + B + C;
-    A = A*pi / den; B = B*pi / den; C = C*pi / den;
-  }
+  } else A = B = C = pi/3;
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
   i0 = ind(A); j0 = ind(B); k0 = ind(C);
   if (i0 < 0) i0 = 0; if (i0 >= N) i0 = N-1;
   if (j0 < 0) j0 = 0; if (j0 >= N) j0 = N-1;
   if (k0 < 0) k0 = 0; if (k0 >= N) k0 = N-1;
-
+// Assume control point A = (x1, y1) = (1, 0) intially
+  x10 = 1; y10 = 0;
+  x20 = cos(2*C); y20 =  sin(2*C);
+  x30 = cos(2*B); y30 = -sin(2*B);
+// But now turn all control points to achieve my standard orientation
+  cos_turn = cos(2*(B-C)/3);
+  sin_turn = sin(2*(B-C)/3);
+  x1 = x10 * cos_turn - y10 * sin_turn;
+  y1 = x10 * sin_turn + y10 * cos_turn;
+  x2 = x20 * cos_turn - y20 * sin_turn;
+  y2 = x20 * sin_turn + y20 * cos_turn;
+  x3 = x30 * cos_turn - y30 * sin_turn;
+  y3 = x30 * sin_turn + y30 * cos_turn;
   printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
@@ -106,26 +105,21 @@ int main(int argc, char **argv) {
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
   printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
-
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
   printf("in the research paper that this program supports is presumed here.)\n\n");
-
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
-
   printf("PLEASE WAIT while data is being generated....\n\n\n\n\n");
-
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
       for (k=O; k<M-O; k++)
         if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
-
   // Also use array to record which cells in the array are within system of bounds
   for (i=0; i<N; i++)
     for (j=0; j<N; j++)
@@ -136,6 +130,16 @@ int main(int argc, char **argv) {
         cos_alpha = cos(alpha);
         cos_beta  = cos(beta);
         cos_gamma = cos(gamma);
+        // The following is taken from my "Grunert" paper, for the discriminant D
+        c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
+        C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
+        eta_sq = 1 - C1 - C2 - C3 + 2*C0;
+	L = (2 / eta_sq) * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
+	R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
+        E = L*L + (R+1)*(R+1);
+        D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
+        flags1[i][j][k] = (eta_sq < 0);
+        flags2[i][j][k] = (D < 0);
         if (
           alpha +  beta + gamma < 2*pi &&
           alpha <  beta + gamma &&
@@ -161,6 +165,13 @@ int main(int argc, char **argv) {
           (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
+#ifdef NEW_TESTS
+&&
+        ( D < 0 || (
+          (alpha >= A || beta <  B || gamma <  C) &&
+          (alpha <  A || beta >= B || gamma <  C) &&
+          (alpha <  A || beta <  B || gamma >= C) ) )
+#endif
 #endif
         ) states[i][j][k] += 2;
         switch(states[i][j][k]) {
@@ -172,11 +183,20 @@ int main(int argc, char **argv) {
   }
   initscr();
   start_color();
-  init_pair(1, COLOR_WHITE, COLOR_BLACK);
-  init_pair(2, COLOR_BLUE,  COLOR_WHITE);
-  init_pair(3, COLOR_RED,   COLOR_WHITE);
-  init_pair(4, COLOR_GREEN, COLOR_WHITE);
-  init_pair(5, COLOR_BLACK, COLOR_WHITE);
+  init_pair(1,  COLOR_WHITE,   COLOR_BLACK);
+  init_pair(2,  COLOR_BLUE,    COLOR_WHITE);
+  init_pair(3,  COLOR_RED,     COLOR_WHITE);
+  init_pair(4,  COLOR_GREEN,   COLOR_WHITE);
+  init_pair(5,  COLOR_BLACK,   COLOR_WHITE);
+  init_pair(6,  COLOR_BLUE,    COLOR_CYAN);
+  init_pair(7,  COLOR_RED,     COLOR_CYAN);
+  init_pair(8,  COLOR_GREEN,   COLOR_CYAN);
+  init_pair(9,  COLOR_BLUE,    COLOR_MAGENTA);
+  init_pair(10, COLOR_RED,     COLOR_MAGENTA);
+  init_pair(11, COLOR_GREEN,   COLOR_MAGENTA);
+  init_pair(12, COLOR_BLUE,    COLOR_YELLOW);
+  init_pair(13, COLOR_RED,     COLOR_YELLOW);
+  init_pair(14, COLOR_GREEN,   COLOR_YELLOW);
   curs_set(0);
   cbreak();
   noecho();
@@ -244,9 +264,31 @@ int main(int argc, char **argv) {
     if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
-        if (chars[i][j][k] == '.') attron(COLOR_PAIR(3));
-          else if (chars[i][j][k] == 'x') attron(COLOR_PAIR(4));
-            else attron(COLOR_PAIR(2));
+        if (chars[i][j][k] == '.') {
+#ifdef SHOW_EXTRA
+          if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else 
+          if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else 
+          attron(COLOR_PAIR(13));
+#else
+          attron(COLOR_PAIR(3));
+#endif
+        } else if (chars[i][j][k] == 'x') {
+#ifdef SHOW_EXTRA
+          if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else 
+          if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else
+          attron(COLOR_PAIR(14));
+#else
+          attron(COLOR_PAIR(4));
+#endif
+        } else {
+#ifdef SHOW_EXTRA
+          if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else 
+          if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else 
+          attron(COLOR_PAIR(12));
+#else
+          attron(COLOR_PAIR(2));
+#endif
+        }
         mvprintw(y,x  ,"%c",chars[i][j][k]);
         mvprintw(y,x+1,"%c",chars[i][j][k]);
       }
