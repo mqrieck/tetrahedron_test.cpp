@@ -134,8 +134,7 @@ int main(int argc, char **argv) {
         c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
         C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
         eta_sq = 1 - C1 - C2 - C3 + 2*C0;
-	L = (2 / eta_sq) * ( (1-x1)*y1*(C1
--1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
+	L = (2 / eta_sq) * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
 	R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
         E = L*L + (R+1)*(R+1);
         D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
