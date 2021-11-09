@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/3/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/7/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -20,7 +20,8 @@
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
 #define COSINES_TEST            // include the "cosines test" when using an acute triangle
-#define NEW_TESTS		// use the new tests based on Grunert's system discriminant
+#define NEW_TEST                // use the new tests based on Grunert's system discriminant
+#define REFINED                 // more refined testing for accepting a cell
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 using namespace std;
@@ -81,10 +82,12 @@ void show_array(int a[N][N][N], int i0, int j0, int k0) {
 }
 
 int main(int argc, char **argv) {
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, choice;
+  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y,
+    choice, delta_i, delta_j, delta_k;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
   double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
     eta_sq, L, R, E, D;
+  bool accept;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -138,9 +141,19 @@ int main(int argc, char **argv) {
   for (int i=0; i<N; i++)
     for (int j=0; j<N; j++)
       for (int k=0; k<N; k++) {
-        alpha = (i+.5)*pi/N;
-        beta  = (j+.5)*pi/N;
-        gamma = (k+.5)*pi/N;
+#ifdef REFINED
+        accept = false;
+        for (delta_i=0; delta_i<2; delta_i++)
+          for (delta_j=0; delta_j<2; delta_j++)
+            for (delta_k=0; delta_k<2; delta_k++) {
+              alpha = (i+delta_i)*pi/N;
+              beta  = (j+delta_j)*pi/N;
+              gamma = (k+delta_k)*pi/N;
+#else
+              alpha = (i+0.5)*pi/N;
+              beta  = (j+0.5)*pi/N;
+              gamma = (k+0.5)*pi/N;
+#endif
         cos_alpha = cos(alpha);
         cos_beta  = cos(beta);
         cos_gamma = cos(gamma);
@@ -177,7 +190,7 @@ int main(int argc, char **argv) {
           (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
-#ifdef NEW_TESTS
+#ifdef NEW_TEST
 && // if outside CSDC then cannot be inside exactly two basic toroids!
         ( D < 0 || (
           (alpha >= A || beta <  B || gamma <  C) &&
@@ -185,7 +198,13 @@ int main(int argc, char **argv) {
           (alpha <  A || beta <  B || gamma >= C) ) )
 #endif
 #endif
-        ) states[i][j][k] += 2;
+#ifdef REFINED
+              ) { accept = true; break; }
+        }
+        if (accept) states[i][j][k] += 2;
+#else
+              ) states[i][j][k] += 2;
+#endif
   }
   // Show slices of the array, indicating the nature of each cell.
   show_array(states, i0, j0, k0);
