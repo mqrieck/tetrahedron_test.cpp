@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 1500                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 1600                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
 #endif
 #ifdef REFINED
               ) { accept = true; break; }
-            }
+        }
         if (accept) states[i][j][k] += 2;
 #else
               ) states[i][j][k] += 2;
