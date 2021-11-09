@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 11/3/2021)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 11/9/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
@@ -22,13 +22,14 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 1500                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
 #define COSINES_TEST            // include the "cosines test" when using an acute triangle
 #define NEW_TESTS		// use the new tests based on Grunert's system discriminant
+#define REFINED                 // more refined testing for accepting a cell
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
@@ -66,12 +67,13 @@ inline int ind(double angle) {
 }
 
 int main(int argc, char **argv) {
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, choice;
+  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, 
+    choice, delta_i, delta_j, delta_k;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
   double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3, 
     eta_sq, L, R, E, D;
   char ch, chars[N][N][N];
-  bool all_done, flags1[N][N][N], flags2[N][N][N];
+  bool accept, all_done, flags1[N][N][N], flags2[N][N][N];
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -124,56 +126,72 @@ int main(int argc, char **argv) {
   for (i=0; i<N; i++)
     for (j=0; j<N; j++)
       for (k=0; k<N; k++) {
-        alpha = (i+.5)*pi/N;
-        beta  = (j+.5)*pi/N;
-        gamma = (k+.5)*pi/N;
-        cos_alpha = cos(alpha);
-        cos_beta  = cos(beta);
-        cos_gamma = cos(gamma);
-        // The following is taken from my "Grunert" paper, for the discriminant D
-        c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
-        C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
-        eta_sq = 1 - C1 - C2 - C3 + 2*C0;
-	L = (2 / eta_sq) * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
-	R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
-        E = L*L + (R+1)*(R+1);
-        D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
-        flags1[i][j][k] = (eta_sq < 0);
-        flags2[i][j][k] = (D < 0);
-        if (
-          alpha +  beta + gamma < 2*pi &&
-          alpha <  beta + gamma &&
-          beta  < gamma + alpha &&
-          gamma < alpha +  beta &&
-          A + beta + gamma  < 2*pi &&
-          alpha + B + gamma < 2*pi &&
-          alpha + beta + C  < 2*pi &&
-          beta  + gamma - alpha < 2*(B+C) &&
-          gamma + alpha -  beta < 2*(C+A) &&
-          alpha +  beta - gamma < 2*(A+B)
+#ifdef REFINED
+        accept = false;
+        for (delta_i=0; delta_i<2; delta_i++)
+          for (delta_j=0; delta_j<2; delta_j++)
+            for (delta_k=0; delta_k<2; delta_k++) {
+              alpha = (i+delta_i)*pi/N;
+              beta  = (j+delta_j)*pi/N;
+              gamma = (k+delta_k)*pi/N;
+#else
+              alpha = (i+0.5)*pi/N;
+              beta  = (j+0.5)*pi/N;
+              gamma = (k+0.5)*pi/N;
+#endif
+              cos_alpha = cos(alpha);
+              cos_beta  = cos(beta);
+              cos_gamma = cos(gamma);
+              // The following is taken from my "Grunert" paper, for the discriminant D
+              c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
+              C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
+              eta_sq = 1 - C1 - C2 - C3 + 2*C0;
+              L = (2 / eta_sq) * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
+              R = (2 / eta_sq) * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
+              E = L*L + (R+1)*(R+1);
+              D = E*E + 18*E + 8*(R+1)*((R+1)*(R+1)-3*L*L) - 27;
+              flags1[i][j][k] = (eta_sq < 0);
+              flags2[i][j][k] = (D < 0);
+              if (
+                alpha +  beta + gamma < 2*pi &&
+                alpha <  beta + gamma &&
+                beta  < gamma + alpha &&
+                gamma < alpha +  beta &&
+                A + beta + gamma  < 2*pi &&
+                alpha + B + gamma < 2*pi &&
+                alpha + beta + C  < 2*pi &&
+                beta  + gamma - alpha < 2*(B+C) &&
+                gamma + alpha -  beta < 2*(C+A) &&
+                alpha +  beta - gamma < 2*(A+B)
 #ifdef ACUTE_TEST
-&&
-          (alpha >= A || beta  < B || beta  < C + alpha) &&
-          (alpha >= A || gamma < C || gamma < B + alpha) &&
-          (beta  >= B || gamma < C || gamma < A + beta ) &&
-          (beta  >= B || alpha < A || alpha < C + beta ) &&
-          (gamma >= C || alpha < A || alpha < B + gamma) &&
-          (gamma >= C || beta  < B || beta  < A + gamma)
+                &&
+                (alpha >= A || beta  < B || beta  < C + alpha) &&
+                (alpha >= A || gamma < C || gamma < B + alpha) &&
+                (beta  >= B || gamma < C || gamma < A + beta ) &&
+                (beta  >= B || alpha < A || alpha < C + beta ) &&
+                (gamma >= C || alpha < A || alpha < B + gamma) &&
+                (gamma >= C || beta  < B || beta  < A + gamma)
 #ifdef COSINES_TEST
-&&
-          (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
-          (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
-          (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
+                &&
+                (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
+                (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
+                (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #ifdef NEW_TESTS
-&& // if outside CSDC then cannot be inside exactly two basic toroids!
-        ( D < 0 || (
-          (alpha >= A || beta <  B || gamma <  C) &&
-          (alpha <  A || beta >= B || gamma <  C) &&
-          (alpha <  A || beta <  B || gamma >= C) ) )
+                && // if outside CSDC then cannot be inside exactly two basic toroids!
+                ( D < 0 || (
+                  (alpha >= A || beta <  B || gamma <  C) &&
+                  (alpha <  A || beta >= B || gamma <  C) &&
+                  (alpha <  A || beta <  B || gamma >= C) ) )
 #endif
 #endif
-        ) states[i][j][k] += 2;
+#ifdef REFINED
+              ) { accept = true; break; }
+            }
+        if (accept) states[i][j][k] += 2;
+#else
+              ) states[i][j][k] += 2;
+#endif
         switch(states[i][j][k]) {
           case 0: chars[i][j][k] = '.'; break;
           case 1: chars[i][j][k] = 'x'; break;
