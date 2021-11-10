@@ -67,10 +67,10 @@ inline int ind(double angle) {
 }
 
 int main(int argc, char **argv) {
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, 
+  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y,
     choice, delta_i, delta_j, delta_k;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
-  double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3, 
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05,
+    x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
     eta_sq, L, R, E, D;
   char ch, chars[N][N][N];
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N];
@@ -106,7 +106,7 @@ int main(int argc, char **argv) {
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
-  printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
+  printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n");
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
@@ -115,7 +115,7 @@ int main(int argc, char **argv) {
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
-  printf("PLEASE WAIT while data is being generated....\n\n\n\n\n");
+  printf("PLEASE WAIT while data is being generated (press the enter key if stuck) ....\n\n\n\n\n");
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
@@ -230,7 +230,7 @@ int main(int argc, char **argv) {
   mvprintw(STARTY+ 7, STARTX+2*N+3, "Dots are outside the bounding region; spaces are inside but without data");
   mvprintw(STARTY+ 8, STARTX+2*N+3, "points to bound; o's are inside and contain data points; x's are subtle.");
   mvprintw(STARTY+10, STARTX+2*N+3, "Use up and down arrow keys to view different slices of bounding region.");
-  mvprintw(STARTY+11, STARTX+2*N+3, "You can also select to display one of these bounding lines/curves");
+  mvprintw(STARTY+11, STARTX+2*N+3, "You can also select to display one of these special lines/curves");
   mvprintw(STARTY+12, STARTX+2*N+3, "(imperfectly rendered):");
   mvprintw(STARTY+14, STARTX+2*N+3, "1. beta = B");
   mvprintw(STARTY+15, STARTX+2*N+3, "2. gamma = C");
@@ -284,15 +284,15 @@ int main(int argc, char **argv) {
       for(k=0, y=STARTY; k < N; k++, y++) {
         if (chars[i][j][k] == '.') {
 #ifdef SHOW_EXTRA
-          if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else 
-          if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else 
+          if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else
+          if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else
           attron(COLOR_PAIR(13));
 #else
           attron(COLOR_PAIR(3));
 #endif
         } else if (chars[i][j][k] == 'x') {
 #ifdef SHOW_EXTRA
-          if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else 
+          if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else
           attron(COLOR_PAIR(14));
 #else
@@ -300,8 +300,8 @@ int main(int argc, char **argv) {
 #endif
         } else {
 #ifdef SHOW_EXTRA
-          if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else 
-          if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else 
+          if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else
+          if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else
           attron(COLOR_PAIR(12));
 #else
           attron(COLOR_PAIR(2));
