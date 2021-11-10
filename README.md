@@ -7,7 +7,7 @@ dealing with the construction of a tetrahedron based on a given acute triangle A
 top of each source code file, as well as the displayed instructions, for further information. 
 
 After compiling either program, one can either execute it without command-line parameters, to indicate that ABC should be an 
-equilateral triangle, or else by specifying three integer parameters that indicate the ratios of the interior angles of the 
-triangle ABC. 
+equilateral triangle, or else by specifying three positive integer parameters to indicate the ratios of the interior angles of
+the triangle ABC. Be sure that each of these numbers does not exceed the sum of the other two, to avoid using an obtuse triangle. 
 
 Some animated GIFs are also provided here. These show examples of executing dynamic_tetrahedon.cpp. 
