@@ -11,4 +11,4 @@ equilateral triangle, or else by specifying three positive integer parameters to
 the triangle ABC. Be sure that each of these numbers does not exceed the sum of the other two, to avoid using an obtuse triangle. 
 
 Some animated GIFs are also provided here. Four of these show examples of executing dynamic_tetrahedon.cpp. One shows a 3D
-image (Mathematica) of a bounding region (gray) surrounding possible (alpha, beta, gamma) points (orange). 
+image (Mathematica) of a bounding region (gray) surrounding possible (alpha, beta, gamma) points (purple). 
