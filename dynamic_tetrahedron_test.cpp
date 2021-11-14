@@ -23,15 +23,15 @@
 #include <ncurses.h>
 
 #define M 800                   // how many (alpha, beta, gamma) points (M^3)?
-#define N 70                    // how fine to subdivide the interval [0, pi]
+#define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
 //#define EXTRA_RULES_2         // some more such extra tests
 #define ACUTE_TESTING           // only appropriate for acute base triangle ABC
-#define MAX_RULES               // testing based on toroid analysis
+//#define MAX_RULES             // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE      // use the new tests based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
 #define REFINED                 // more refined testing for accepting a cell
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
