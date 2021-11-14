@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/7/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/14/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper.
 
@@ -19,8 +19,12 @@
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define ACUTE_TEST              // only appropriate for acute base triangle ABC
-#define COSINES_TEST            // include the "cosines test" when using an acute triangle
-#define NEW_TEST                // use the new tests based on Grunert's system discriminant
+//#define EXTRA_RULES_1         // some extra tests that could be superfluous
+//#define EXTRA_RULES_2         // some more such extra tests
+#define ACUTE_TESTING           // only appropriate for acute base triangle ABC
+#define MAX_RULES               // testing based on toroid analysis
+#define EASY_COSINE_RULES       // more testing based of toroid analysis
+#define GRUNERT_DISCR_RULE      // use the new tests based on Grunert's system discriminant
 #define REFINED                 // more refined testing for accepting a cell
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
@@ -170,33 +174,41 @@ int main(int argc, char **argv) {
           alpha +  beta + gamma < 2*pi &&
           alpha <  beta + gamma &&
           beta  < gamma + alpha &&
-          gamma < alpha +  beta &&
+          gamma < alpha +  beta 
+#ifdef EXTRA_RULES_1
+          &&
           A + beta + gamma  < 2*pi &&
           alpha + B + gamma < 2*pi &&
-          alpha + beta + C  < 2*pi &&
+          alpha + beta + C  < 2*pi
+#endif
+#ifdef EXTRA_RULES_2
+          &&
           beta  + gamma - alpha < 2*(B+C) &&
           gamma + alpha -  beta < 2*(C+A) &&
           alpha +  beta - gamma < 2*(A+B)
-#ifdef ACUTE_TEST
-&&
+#endif
+#ifdef ACUTE_TESTING
+#ifdef MAX_RULES
+          &&
           (alpha >= A || beta  < B || beta  < C + alpha) &&
           (alpha >= A || gamma < C || gamma < B + alpha) &&
           (beta  >= B || gamma < C || gamma < A + beta ) &&
           (beta  >= B || alpha < A || alpha < C + beta ) &&
           (gamma >= C || alpha < A || alpha < B + gamma) &&
           (gamma >= C || beta  < B || beta  < A + gamma)
-#ifdef COSINES_TEST
-&&
+#endif
+#ifdef EASY_COSINE_RULES
+          &&
           (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
           (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
-#ifdef NEW_TEST
-&& // if outside CSDC then cannot be inside exactly two basic toroids!
-        ( D < 0 || (
-          (alpha >= A || beta <  B || gamma <  C) &&
-          (alpha <  A || beta >= B || gamma <  C) &&
-          (alpha <  A || beta <  B || gamma >= C) ) )
+#ifdef GRUNERT_DISCR_RULE
+          && // if outside CSDC then cannot be inside exactly two basic toroids!
+          ( D < 0 || (
+            (alpha >= A || beta <  B || gamma <  C) &&
+            (alpha <  A || beta >= B || gamma <  C) &&
+            (alpha <  A || beta <  B || gamma >= C) ) )
 #endif
 #endif
 #ifdef REFINED
