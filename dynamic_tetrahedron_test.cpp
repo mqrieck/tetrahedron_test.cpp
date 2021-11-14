@@ -3,16 +3,16 @@
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
-// Note: Need the ncurses library, and should be able to compile at the command line
-// using something like this:
+// Note: You need the ncurses library, and should then be able to compile at the command
+// line using something like this:
 //
 //     g++ -c extended_dynamic_test.cpp
 //     g++ extended_dymanic_test.o -lncurses -o test
 //     ./test
 //
-// (Will need sufficiently large virtual terminal screen and small enough font.)
+// (You will need a sufficiently large virtual terminal screen and a small enough font.)
 
-// Note: Can use three command line integer parameters to specify angle proportion A:B:C.
+// Note: You can use three command line integer parameters to specify angle proportion A:B:C.
 
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
@@ -24,24 +24,25 @@
 
 #define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 50                    // how fine to subdivide the interval [0, pi]
-#define O 0                     // set higher to avoid low "tilt planes"
+#define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
-//#define EXTRA_RULES_2         // some more such extra tests
-#define ACUTE_TESTING           // only appropriate for acute base triangle ABC
+//#define EXTRA_RULES_2         // some additional such tests
+#define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 //#define MAX_RULES             // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
-#define REFINED                 // more refined testing for accepting a cell
+#define REFINED                 // more refined testing for cell acceptance/rejection
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
 using namespace std;
 
-// The tau's are "tilt angles" for three planes, each containing one of the sidelines of
-// the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
-// beta and gamma, at the point of intersection of the three planes.
+// Obtain "view angles" at P based on triangle ABC and three "tilt angles", the tau's.
+// Each tilt angle is the dihedral angle between the ABC side and another side of the
+// tetrahedron ABCP. Dihedral angle formulas are used to find the "view angles", alpha,
+// beta and gamma, at the point P.
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
     double cos_tau1, cos_tau2, cos_tau3, sin_tau1, sin_tau2, sin_tau3;
@@ -119,13 +120,13 @@ int main(int argc, char **argv) {
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
   printf("PLEASE WAIT while data is being generated (press the enter key if stuck) ....\n\n\n\n\n");
-  // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
+  // Use a 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
       for (k=O; k<M-O; k++)
         if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
-  // Also use array to record which cells in the array are within system of bounds
+  // Also use an array to record which cells in the array are within system of bounds
   for (i=0; i<N; i++)
     for (j=0; j<N; j++)
       for (k=0; k<N; k++) {
@@ -232,7 +233,7 @@ int main(int argc, char **argv) {
   noecho();
   keypad(stdscr,TRUE);
   attron(COLOR_PAIR(1));
-  printf("\033[2J"); // Clears the screen! Uncomment for Unix(-like). Comment out for VC++.
+  printf("\033[2J");    // Clears the screen in a Unix-like OS
   nodelay(stdscr,TRUE);
   attron(COLOR_PAIR(1));
   mvprintw(STARTY   , STARTX+2*N+3, "A = %.4f", A);
