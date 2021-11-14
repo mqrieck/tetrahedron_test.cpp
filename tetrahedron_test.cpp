@@ -1,11 +1,11 @@
 
 // tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/14/2021)
 
-// Note: This is test code for the results in my "tetrahedron and toroids" paper.
+// Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
 // Note: Recommend redirecting the output to a file, and scrolling through that file.
 
-// Note: Can use three command line integer parameters to specify angle proportion A:B:C.
+// Note: You can use three command line integer parameters to specify angle proportion A:B:C.
 
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
@@ -16,22 +16,23 @@
 
 #define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 80                    // how fine to subdivide the interval [0, pi]
-#define O 0                     // set higher to avoid low "tilt planes"
+#define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
-//#define EXTRA_RULES_2         // some more such extra tests
-#define ACUTE_TESTING           // only appropriate for acute base triangle ABC
+//#define EXTRA_RULES_2         // some additional such tests
+#define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 //#define MAX_RULES             // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
-#define REFINED                 // more refined testing for accepting a cell
+#define REFINED                 // more refined testing for cell acceptance/rejection
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 using namespace std;
 
-// The tau's are "tilt angles" for three planes, each containing one of the sidelines of
-// the triangle ABC. Dihedral angle formulas are used to find the "view angles", alpha,
-// beta and gamma, at the point of intersection of the three planes.
+// Obtain "view angles" at P based on triangle ABC and three "tilt angles", the tau's.
+// Each tilt angle is the dihedral angle between the ABC side and another side of the
+// tetrahedron ABCP. Dihedral angle formulas are used to find the "view angles", alpha,
+// beta and gamma, at the point P.
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
     double cos_tau1, cos_tau2, cos_tau3, sin_tau1, sin_tau2, sin_tau3;
