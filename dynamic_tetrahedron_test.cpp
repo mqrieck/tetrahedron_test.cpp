@@ -22,7 +22,7 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 800                   // how many (alpha, beta, gamma) points (M^3)?
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
