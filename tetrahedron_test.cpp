@@ -18,7 +18,6 @@
 #define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
-#define ACUTE_TEST              // only appropriate for acute base triangle ABC
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
 //#define EXTRA_RULES_2         // some more such extra tests
 #define ACUTE_TESTING           // only appropriate for acute base triangle ABC
