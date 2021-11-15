@@ -33,6 +33,7 @@
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
+#define REF_NUM 3               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
@@ -132,12 +133,12 @@ int main(int argc, char **argv) {
       for (k=0; k<N; k++) {
 #ifdef REFINED
         accept = false;
-        for (delta_i=0; delta_i<2; delta_i++)
-          for (delta_j=0; delta_j<2; delta_j++)
-            for (delta_k=0; delta_k<2; delta_k++) {
-              alpha = (i+delta_i)*pi/N;
-              beta  = (j+delta_j)*pi/N;
-              gamma = (k+delta_k)*pi/N;
+        for (delta_i=0; delta_i<=REF_NUM; delta_i++)
+          for (delta_j=0; delta_j<=REF_NUM; delta_j++)
+            for (delta_k=0; delta_k<=REF_NUM; delta_k++) {
+              alpha = (i+(double)delta_i/REF_NUM)*pi/N;
+              beta  = (j+(double)delta_j/REF_NUM)*pi/N;
+              gamma = (k+(double)delta_k/REF_NUM)*pi/N;
 #else
               alpha = (i+0.5)*pi/N;
               beta  = (j+0.5)*pi/N;
