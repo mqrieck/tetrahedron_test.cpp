@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cmath>
 
-#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 1200                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 80                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
@@ -25,6 +25,7 @@
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
+#define REF_NUM 2               // how much refinement?
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 using namespace std;
@@ -147,12 +148,12 @@ int main(int argc, char **argv) {
       for (int k=0; k<N; k++) {
 #ifdef REFINED
         accept = false;
-        for (delta_i=0; delta_i<2; delta_i++)
-          for (delta_j=0; delta_j<2; delta_j++)
-            for (delta_k=0; delta_k<2; delta_k++) {
-              alpha = (i+delta_i)*pi/N;
-              beta  = (j+delta_j)*pi/N;
-              gamma = (k+delta_k)*pi/N;
+        for (delta_i=0; delta_i<=REF_NUM; delta_i++)
+          for (delta_j=0; delta_j<=REF_NUM; delta_j++)
+            for (delta_k=0; delta_k<=REF_NUM; delta_k++) {
+              alpha = (i+(double)delta_i/REF_NUM)*pi/N;
+              beta  = (j+(double)delta_j/REF_NUM)*pi/N;
+              gamma = (k+(double)delta_k/REF_NUM)*pi/N;
 #else
               alpha = (i+0.5)*pi/N;
               beta  = (j+0.5)*pi/N;
