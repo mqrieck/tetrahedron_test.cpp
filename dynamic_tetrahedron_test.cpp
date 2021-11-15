@@ -41,7 +41,7 @@ using namespace std;
 
 // Obtain "view angles" at P based on triangle ABC and three "tilt angles", the tau's.
 // Each tilt angle is the dihedral angle between the ABC side and another side of the
-// tetrahedron ABCP. Dihedral angle formulas are used to find the "view angles", alpha,
+// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles, alpha,
 // beta and gamma, at the point P.
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
