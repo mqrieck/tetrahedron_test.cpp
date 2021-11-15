@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 11/14/2021)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 11/15/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
