@@ -25,7 +25,7 @@
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 2               // how much refinement?
+#define REF_NUM 3               // how much refinement?
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 using namespace std;
