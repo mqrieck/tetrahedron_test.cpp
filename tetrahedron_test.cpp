@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/14/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/17/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
@@ -14,8 +14,8 @@
 #include <cstdlib>
 #include <cmath>
 
-#define M 1200                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 80                    // how fine to subdivide the interval [0, pi]
+#define M 1500                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
@@ -30,10 +30,10 @@
 
 using namespace std;
 
-// Obtain "view angles" at P based on triangle ABC and three "tilt angles", the tau's.
+// Obtain the "view angles" at P based on triangle ABC and three "tilt angles" (the tau's).
 // Each tilt angle is the dihedral angle between the ABC side and another side of the
-// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles, alpha,
-// beta and gamma, at the point P.
+// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles at P, i.e., 
+// the angles alpha = <BPC, beta = <CPA, and gamma = <APB.
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
     double cos_tau1, cos_tau2, cos_tau3, sin_tau1, sin_tau2, sin_tau3;
@@ -140,8 +140,8 @@ int main(int argc, char **argv) {
   for (int i=O; i<M-O; i++)
     for (int j=O; j<M-O; j++)
       for (int k=O; k<M-O; k++)
-        if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha,
-          beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
+        if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha, beta, gamma, rejected))
+          states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
   // Also use array to record which cells in the array are within system of bounds
   for (int i=0; i<N; i++)
     for (int j=0; j<N; j++)
@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #ifdef GRUNERT_DISCR_RULE
-          && // if outside CSDC then cannot be inside exactly two basic toroids!
+          && // if outside CSDC then cannot be inside exactly two basic toroids! (Bo Wang's observation)
           ( D < 0 || (
             (alpha >= A || beta <  B || gamma <  C) &&
             (alpha <  A || beta >= B || gamma <  C) &&
