@@ -413,3 +413,4 @@ int main(int argc, char **argv) {
   attroff(COLOR_PAIR(1));
   endwin();
 }
+
