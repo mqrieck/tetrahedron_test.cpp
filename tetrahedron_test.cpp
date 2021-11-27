@@ -205,7 +205,7 @@ int main(int argc, char **argv) {
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #ifdef GRUNERT_DISCR_RULE
-          && // if outside CSDC then cannot be inside exactly two basic toroids! (Bo Wang's observation)
+          && // if outside CSDC then cannot be inside exactly two basic toroids! (Bo Wang's observation?)
           ( D < 0 || (
             (alpha >= A || beta <  B || gamma <  C) &&
             (alpha <  A || beta >= B || gamma <  C) &&
