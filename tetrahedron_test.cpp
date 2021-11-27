@@ -211,10 +211,15 @@ int main(int argc, char **argv) {
 #endif
 #ifdef GRUNERT_DISCR_RULE
           && // if outside CSDC then cannot be inside exactly two basic toroids!
-          ( D < 0 || (
-            (alpha >= A || beta <  B || gamma <  C) &&
-            (alpha <  A || beta >= B || gamma <  C) &&
-            (alpha <  A || beta <  B || gamma >= C) ) )
+            ( D < 0 || (
+              (alpha >= A || beta <  B || gamma <  C) &&
+              (alpha <  A || beta >= B || gamma <  C) &&
+              (alpha <  A || beta <  B || gamma >= C) ) )
+//          ( D < 0 || ! (
+//            (alpha <  A && beta >= B && gamma >= C)  ||
+//            (alpha >= A && beta <  B && gamma >= C)  ||
+//            (alpha >= A && beta >= B && gamma  < C)  ||
+//            (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ))
 #endif
 #endif
 #ifdef REFINED
