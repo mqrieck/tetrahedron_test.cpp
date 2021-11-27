@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/17/2021)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 11/27/2021)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
 
@@ -18,6 +18,7 @@
 #define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
+#define BASIC_COSINE_RULE       // equivalent to four basic linear rules
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
 //#define EXTRA_RULES_2         // some additional such tests
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
@@ -172,10 +173,14 @@ int main(int argc, char **argv) {
         D = E*E + 18*E*eta_sq*eta_sq + 8*(R+eta_sq)*((R+eta_sq)*(R+eta_sq)-3*L*L)*eta_sq
           - 27*eta_sq*eta_sq*eta_sq*eta_sq;
         if (
+#ifdef BASIC_COSINE_RULE
+          1 - C1 - C2 - C3 + 2*C0 > 0
+#else
           alpha +  beta + gamma < 2*pi &&
           alpha <  beta + gamma &&
           beta  < gamma + alpha &&
-          gamma < alpha +  beta 
+          gamma < alpha +  beta
+#endif
 #ifdef EXTRA_RULES_1
           &&
           A + beta + gamma  < 2*pi &&
@@ -205,7 +210,7 @@ int main(int argc, char **argv) {
           (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
 #ifdef GRUNERT_DISCR_RULE
-          && // if outside CSDC then cannot be inside exactly two basic toroids! (Bo Wang's observation?)
+          && // if outside CSDC then cannot be inside exactly two basic toroids!
           ( D < 0 || (
             (alpha >= A || beta <  B || gamma <  C) &&
             (alpha <  A || beta >= B || gamma <  C) &&
