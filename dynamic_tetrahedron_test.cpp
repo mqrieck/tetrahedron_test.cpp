@@ -34,7 +34,8 @@
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 //#define MAX_RULES             // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE      // a test based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
+//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 8               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
@@ -198,17 +199,21 @@ int main(int argc, char **argv) {
                 (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
                 (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
 #endif
-#ifdef GRUNERT_DISCR_RULE
-                && // if outside CSDC then cannot be inside exactly two basic toroids
+#ifdef GRUNERT_DISCR_RULE_1
+                && // if outside the CSDC then cannot be inside exactly two of the basic toroids
                   ( D < 0 || (
                     (alpha >= A || beta <  B || gamma <  C) &&
                     (alpha <  A || beta >= B || gamma <  C) &&
                     (alpha <  A || beta <  B || gamma >= C) ) )
-//                ( D < 0 || ! (
-//                  (alpha <  A && beta >= B && gamma >= C)  ||
-//                  (alpha >= A && beta <  B && gamma >= C)  ||
-//                  (alpha >= A && beta >= B && gamma  < C)  ||
-//                  (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ))
+#endif
+#ifdef GRUNERT_DISCR_RULE_2
+                && // if outside the CSDC then cannot be inside exactly two of the basic toroids
+                   // nor inside all three basic toroids and outside their supplementary toroids
+                  ( D < 0 || ! (
+                    (alpha <  A && beta >= B && gamma >= C)  ||
+                    (alpha >= A && beta <  B && gamma >= C)  ||
+                    (alpha >= A && beta >= B && gamma  < C)  ||
+                    (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ))
 #endif
 #endif
 #ifdef REFINED
@@ -413,4 +418,3 @@ int main(int argc, char **argv) {
   attroff(COLOR_PAIR(1));
   endwin();
 }
-
