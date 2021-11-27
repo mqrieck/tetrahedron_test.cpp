@@ -28,7 +28,7 @@
 //#define N 100                 // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
-#define BASIC_COSINE_RULE       // equivalent to four basic linear rules
+//#define BASIC_COSINE_RULE     // equivalent to four basic linear rules
 //#define EXTRA_RULES_1         // some extra tests that could be superfluous
 //#define EXTRA_RULES_2         // some additional such tests
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
-  printf("PLEASE WAIT while data is being generated (press the enter key if stuck) ....\n\n\n\n\n");
+  printf("PLEASE WAIT while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
   // Use a 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
@@ -200,10 +200,15 @@ int main(int argc, char **argv) {
 #endif
 #ifdef GRUNERT_DISCR_RULE
                 && // if outside CSDC then cannot be inside exactly two basic toroids
-                ( D < 0 || (
-                  (alpha >= A || beta <  B || gamma <  C) &&
-                  (alpha <  A || beta >= B || gamma <  C) &&
-                  (alpha <  A || beta <  B || gamma >= C) ) )
+                  ( D < 0 || (
+                    (alpha >= A || beta <  B || gamma <  C) &&
+                    (alpha <  A || beta >= B || gamma <  C) &&
+                    (alpha <  A || beta <  B || gamma >= C) ) )
+//                ( D < 0 || ! (
+//                  (alpha <  A && beta >= B && gamma >= C)  ||
+//                  (alpha >= A && beta <  B && gamma >= C)  ||
+//                  (alpha >= A && beta >= B && gamma  < C)  ||
+//                  (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ))
 #endif
 #endif
 #ifdef REFINED
