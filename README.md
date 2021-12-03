@@ -1,6 +1,9 @@
 # tetrahedron_test.cpp
 Test code for my tetrahedron and toroid paper
 
+Question: Given a fixed (acute) triangle in space, when you view its vertices from another point in space, what constraints 
+exist among the angles between the the rays from the viewing point to the vertices?
+
 The programs tetrahedon_test.cpp and dynamic_test_tetrahedron.cpp test my claims made in a (yet-to-be-published) research paper 
 dealing with the construction of a tetrahedron based on a given acute triangle ABC (as a face). The possible interior angles 
 (alpha, beta, gamma) at the new vertex P are restricted in various ways, by a system of (conditional) inequalities. See the 
