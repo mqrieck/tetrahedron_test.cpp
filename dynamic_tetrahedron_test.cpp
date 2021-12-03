@@ -22,22 +22,22 @@
 #include <cstdlib>
 #include <ncurses.h>
 
-#define M 1600                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 1200                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 40                    // how fine to subdivide the interval [0, pi]
 //#define M 2000                // how many (alpha, beta, gamma) points (M^3)?
 //#define N 100                 // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 //#define BASIC_COSINE_RULE     // equivalent to four basic linear rules
-//#define EXTRA_RULES_1         // some extra tests that could be superfluous
-//#define EXTRA_RULES_2         // some additional such tests
+#define EXTRA_RULES_1           // some extra tests that could be superfluous
+#define EXTRA_RULES_2           // some additional such tests
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
-//#define MAX_RULES             // some testing based on toroid analysis
+#define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
-//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
+//#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE_2    // a more restictive version of that (unnecessary)
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 8               // how much refinement?
+#define REF_NUM 6               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
@@ -80,7 +80,7 @@ int main(int argc, char **argv) {
     choice, delta_i, delta_j, delta_k;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05,
     x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
-    eta_sq, L, R, E, D;
+    H, L, R, E, D;
   char ch, chars[N][N][N];
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N];
   // Set the angles for the base triangle ABC
@@ -109,7 +109,7 @@ int main(int argc, char **argv) {
   y2 = x20 * sin_turn + y20 * cos_turn;
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
-  printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
+  printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f .\n\n", A, B, C);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
@@ -154,13 +154,12 @@ int main(int argc, char **argv) {
               // The following is taken from my "Grunert" paper, for the discriminant D
               c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
               C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
-              eta_sq = 1 - C1 - C2 - C3 + 2*C0;
+              H = 1 - C1 - C2 - C3 + 2*C0;
               L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
               R = 2 * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
-              E = L*L + (R+eta_sq)*(R+eta_sq);
-              D = E*E + 18*E*eta_sq*eta_sq + 8*(R+eta_sq)*((R+eta_sq)*(R+eta_sq)-3*L*L)*eta_sq
-                - 27*eta_sq*eta_sq*eta_sq*eta_sq;
-              flags1[i][j][k] = (eta_sq < 0);
+              E = L*L + (R+H)*(R+H);
+              D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
+              flags1[i][j][k] = (H < 0);
               flags2[i][j][k] = (D < 0);
               if (
 #ifdef BASIC_COSINE_RULE
@@ -204,7 +203,8 @@ int main(int argc, char **argv) {
                   ( D < 0 || (
                     (alpha >= A || beta <  B || gamma <  C) &&
                     (alpha <  A || beta >= B || gamma <  C) &&
-                    (alpha <  A || beta <  B || gamma >= C) ) )
+                    (alpha <  A || beta <  B || gamma >= C)
+                ) )
 #endif
 #ifdef GRUNERT_DISCR_RULE_2
                 && // if outside the CSDC then cannot be inside exactly two of the basic toroids
@@ -213,7 +213,8 @@ int main(int argc, char **argv) {
                     (alpha <  A && beta >= B && gamma >= C)  ||
                     (alpha >= A && beta <  B && gamma >= C)  ||
                     (alpha >= A && beta >= B && gamma  < C)  ||
-                    (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ))
+                    (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C)
+                ) )
 #endif
 #endif
 #ifdef REFINED
