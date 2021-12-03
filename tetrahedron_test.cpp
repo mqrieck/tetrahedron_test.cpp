@@ -27,7 +27,7 @@
 #define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
 //#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 3               // how much refinement?
+#define REF_NUM 6               // how much refinement?
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 using namespace std;
@@ -93,7 +93,7 @@ int main(int argc, char **argv) {
     choice, delta_i, delta_j, delta_k;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
   double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
-    eta_sq, L, R, E, D;
+    H, L, R, E, D;
   bool accept;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
@@ -123,7 +123,7 @@ int main(int argc, char **argv) {
   y2 = x20 * sin_turn + y20 * cos_turn;
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
-  printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f\n\n", A, B, C);
+  printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f .\n\n", A, B, C);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
@@ -137,7 +137,8 @@ int main(int argc, char **argv) {
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
-  printf("portion of the cube (when it contains part of the boundary). Pound signs show where α = A, β = B or γ = C.\n");
+  printf("portion of the cube (when it contains part of the boundary). When enabled, pound signs show where α = A, β = B or γ = C.\n\n");
+  printf("PLEASE WAIT while data is being generated .... \n\n\n\n\n");
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
     for (int j=O; j<M-O; j++)
@@ -167,12 +168,11 @@ int main(int argc, char **argv) {
         // The following is taken from my "Grunert" paper, for the discriminant D
         c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
         C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
-        eta_sq = 1 - C1 - C2 - C3 + 2*C0;
+        H = 1 - C1 - C2 - C3 + 2*C0;
         L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
         R = 2 * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
-        E = L*L + (R+eta_sq)*(R+eta_sq);
-        D = E*E + 18*E*eta_sq*eta_sq + 8*(R+eta_sq)*((R+eta_sq)*(R+eta_sq)-3*L*L)*eta_sq
-          - 27*eta_sq*eta_sq*eta_sq*eta_sq;
+        E = L*L + (R+H)*(R+H);
+        D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
         if (
 #ifdef BASIC_COSINE_RULE
           1 - C1 - C2 - C3 + 2*C0 > 0
