@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 1/4/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 1/5/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -88,8 +88,8 @@ int main(int argc, char **argv) {
   char ch, chars[N][N][N];
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N];
 #ifdef COMPLEX_GRUNERT_DISCR
-  complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27,
-    zeta1, zeta2, zeta3, zeta1conj, zeta2conj, zeta3conj, zeta_prod, xi, xi_conj, D_complex;
+  complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27, zeta1, zeta2, zeta3, zeta1conj, zeta2conj,
+    zeta3conj, zeta_prod, zeta_prod_sqr, zeta_prod_sqr_conj, xi, xi_conj, xi_norm, D_complex;
 #endif
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
@@ -117,6 +117,8 @@ int main(int argc, char **argv) {
   zeta2conj = x20 - y20*1i;
   zeta3conj = x30 - y30*1i;
   zeta_prod = zeta1*zeta2*zeta3;
+  zeta_prod_sqr = zeta_prod*zeta_prod;
+  zeta_prod_sqr_conj = conj(zeta_prod_sqr);
 #else
 // Otherwise, turn all control points to achieve my standard orientation
   cos_turn = cos(2*(B-C)/3);
@@ -128,13 +130,13 @@ int main(int argc, char **argv) {
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
 #endif
-  printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f .\n\n", A, B, C);
+  printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/pi, B/pi, C/pi);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
-  printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n");
+  printf("mistake. Such mistakes can only happen at the boundary of the allowable portion of the cube.\n\n");
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
@@ -143,7 +145,7 @@ int main(int argc, char **argv) {
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
-  printf("PLEASE WAIT while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
+  printf("PLEASE WAIT (patience is a virtue) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
   // Use a 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
@@ -182,8 +184,9 @@ int main(int argc, char **argv) {
                      (zeta2*zeta2 + two*zeta3*zeta1) * G2 +
                      (zeta3*zeta3 + two*zeta1*zeta2) * G3 ) / H;
               xi_conj = conj(xi);
-              D_complex = ( xi*xi*xi_conj*xi_conj - four * ( (xi*xi*xi)/(zeta_prod*zeta_prod) +
-                (zeta_prod*zeta_prod)*(xi_conj*xi_conj*xi_conj) ) + eighteen*xi*xi_conj - twenty_seven ) * H*H*H*H;
+              xi_norm = xi*xi_conj;
+              D_complex = ( xi_norm*xi_norm - four * ( zeta_prod_sqr_conj*xi*xi*xi +
+                zeta_prod_sqr*xi_conj*xi_conj*xi_conj ) + eighteen*xi_norm - twenty_seven ) * H*H*H*H;
               D = real(D_complex);
 #else
               L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
