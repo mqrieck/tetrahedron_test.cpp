@@ -1,7 +1,7 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 11/27/2021)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 1/4/2022)
 
-// Note: This is test code for the results in my "tetrahedron and toroids" paper, and more.
+// Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
 // Note: You need the ncurses library, and should then be able to compile at the command
 // line using something like this:
@@ -17,12 +17,7 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
-#include <cstdio>
-#include <cmath>
-#include <cstdlib>
-#include <ncurses.h>
-
-#define M 1200                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 40                    // how fine to subdivide the interval [0, pi]
 //#define M 2000                // how many (alpha, beta, gamma) points (M^3)?
 //#define N 100                 // how fine to subdivide the interval [0, pi]
@@ -36,17 +31,26 @@
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 //#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
 #define GRUNERT_DISCR_RULE_2    // a more restictive version of that (unnecessary)
+//#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 6               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
+#include <cstdio>
+#include <cmath>
+#include <cstdlib>
+#include <ncurses.h>
+#ifdef COMPLEX_GRUNERT_DISCR
+#include <complex>
+#endif
+
 using namespace std;
 
 // Obtain the "view angles" at P based on triangle ABC and three "tilt angles" (the tau's).
 // Each tilt angle is the dihedral angle between the ABC side and another side of the
-// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles at P, i.e., 
+// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles at P, i.e.,
 // the angles alpha = <BPC, beta = <CPA, and gamma = <APB.
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
@@ -80,9 +84,13 @@ int main(int argc, char **argv) {
     choice, delta_i, delta_j, delta_k;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05,
     x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
-    H, L, R, E, D;
+    H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3;
   char ch, chars[N][N][N];
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N];
+#ifdef COMPLEX_GRUNERT_DISCR
+  complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27,
+    zeta1, zeta2, zeta3, zeta1conj, zeta2conj, zeta3conj, zeta_prod, xi, xi_conj, D_complex;
+#endif
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -96,11 +104,21 @@ int main(int argc, char **argv) {
   if (i0 < 0) i0 = 0; if (i0 >= N) i0 = N-1;
   if (j0 < 0) j0 = 0; if (j0 >= N) j0 = N-1;
   if (k0 < 0) k0 = 0; if (k0 >= N) k0 = N-1;
-// Assume control point A = (x1, y1) = (1, 0) intially
+// Set control points (at least initially)
   x10 = 1; y10 = 0;
   x20 = cos(2*C); y20 =  sin(2*C);
   x30 = cos(2*B); y30 = -sin(2*B);
-// But now turn all control points to achieve my standard orientation
+#ifdef COMPLEX_GRUNERT_DISCR
+// Compute certain complex numbers if using this method
+  zeta1 = x10 + y10*1i;
+  zeta2 = x20 + y20*1i;
+  zeta3 = x30 + y30*1i;
+  zeta1conj = x10 - y10*1i;
+  zeta2conj = x20 - y20*1i;
+  zeta3conj = x30 - y30*1i;
+  zeta_prod = zeta1*zeta2*zeta3;
+#else
+// Otherwise, turn all control points to achieve my standard orientation
   cos_turn = cos(2*(B-C)/3);
   sin_turn = sin(2*(B-C)/3);
   x1 = x10 * cos_turn - y10 * sin_turn;
@@ -109,6 +127,7 @@ int main(int argc, char **argv) {
   y2 = x20 * sin_turn + y20 * cos_turn;
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
+#endif
   printf("\n\nThe base triangle angles: A = %.4f , B = %.4f , C = %.4f .\n\n", A, B, C);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
@@ -155,15 +174,28 @@ int main(int argc, char **argv) {
               c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
               C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
               H = 1 - C1 - C2 - C3 + 2*C0;
+#ifdef COMPLEX_GRUNERT_DISCR
+              G1 = (cosA*(cosA+cosB*cosC) + (1-cosA*cosA)*C0)/(1+cosA*cosB*cosC) - C1;
+              G2 = (cosB*(cosB+cosC*cosA) + (1-cosB*cosB)*C0)/(1+cosA*cosB*cosC) - C2;
+              G3 = (cosC*(cosC+cosA*cosB) + (1-cosC*cosC)*C0)/(1+cosA*cosB*cosC) - C3;
+              xi = ( (zeta1*zeta1 + two*zeta2*zeta3) * G1 +
+                     (zeta2*zeta2 + two*zeta3*zeta1) * G2 +
+                     (zeta3*zeta3 + two*zeta1*zeta2) * G3 ) / H;
+              xi_conj = conj(xi);
+              D_complex = ( xi*xi*xi_conj*xi_conj - four * ( (xi*xi*xi)/(zeta_prod*zeta_prod) +
+                (zeta_prod*zeta_prod)*(xi_conj*xi_conj*xi_conj) ) + eighteen*xi*xi_conj - twenty_seven ) * H*H*H*H;
+              D = real(D_complex);
+#else
               L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
               R = 2 * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
               E = L*L + (R+H)*(R+H);
               D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
+#endif
               flags1[i][j][k] = (H < 0);
               flags2[i][j][k] = (D < 0);
               if (
 #ifdef BASIC_COSINE_RULE
-                1 - C1 - C2 - C3 + 2*C0 > 0
+                H > 0
 #else
                 alpha +  beta + gamma < 2*pi &&
                 alpha <  beta + gamma &&
