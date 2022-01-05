@@ -187,7 +187,7 @@ int main(int argc, char **argv) {
         cos_alpha = cos(alpha);
         cos_beta  = cos(beta);
         cos_gamma = cos(gamma);
-        // The following is taken from my "Grunert" paper, for the discriminant D
+        // The following formulas come from my "Grunert" paper and from my paper with Bo Wang
         c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
         C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
         H = 1 - C1 - C2 - C3 + 2*C0;
