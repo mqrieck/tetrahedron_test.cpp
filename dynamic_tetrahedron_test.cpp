@@ -29,9 +29,9 @@
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-//#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
 #define GRUNERT_DISCR_RULE_2    // a more restictive version of that (unnecessary)
-//#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
+#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 6               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
@@ -89,7 +89,7 @@ int main(int argc, char **argv) {
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N];
 #ifdef COMPLEX_GRUNERT_DISCR
   complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27, zeta1, zeta2, zeta3, zeta1conj, zeta2conj,
-    zeta3conj, zeta_prod, zeta_prod_sqr, zeta_prod_sqr_conj, xi, xi_conj, xi_norm, D_complex;
+    zeta3conj, zeta_prod, zeta_prod_sqr, zeta_prod_sqr_conj, xi, xi_conj, xi_norm, xi_cubed, xi_cubed_conj, D_complex;
 #endif
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
@@ -185,8 +185,10 @@ int main(int argc, char **argv) {
                      (zeta3*zeta3 + two*zeta1*zeta2) * G3 ) / H;
               xi_conj = conj(xi);
               xi_norm = xi*xi_conj;
-              D_complex = ( xi_norm*xi_norm - four * ( zeta_prod_sqr_conj*xi*xi*xi +
-                zeta_prod_sqr*xi_conj*xi_conj*xi_conj ) + eighteen*xi_norm - twenty_seven ) * H*H*H*H;
+              xi_cubed = xi*xi*xi;
+              xi_cubed_conj = conj(xi_cubed);
+              D_complex = ( xi_norm*xi_norm - four * ( zeta_prod_sqr_conj*xi_cubed +
+                zeta_prod_sqr*xi_cubed_conj ) + eighteen*xi_norm - twenty_seven ) * H*H*H*H;
               D = real(D_complex);
 #else
               L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
