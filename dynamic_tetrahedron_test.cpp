@@ -29,9 +29,9 @@
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
-#define GRUNERT_DISCR_RULE_2    // a more restictive version of that (unnecessary)
-#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
+#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
+//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
+//#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 6               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
