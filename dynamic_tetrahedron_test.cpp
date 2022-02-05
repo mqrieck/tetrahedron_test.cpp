@@ -29,8 +29,8 @@
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
-//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
+//#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE_2    // a more restictive version of that (unnecessary)
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 6               // how much refinement?
@@ -273,17 +273,17 @@ int main(int argc, char **argv) {
   init_pair(1,  COLOR_WHITE,   COLOR_BLACK);
   init_pair(2,  COLOR_BLUE,    COLOR_WHITE);
   init_pair(3,  COLOR_RED,     COLOR_WHITE);
-  init_pair(4,  COLOR_GREEN,   COLOR_WHITE);
+  init_pair(4,  COLOR_MAGENTA, COLOR_WHITE);
   init_pair(5,  COLOR_BLACK,   COLOR_WHITE);
   init_pair(6,  COLOR_BLUE,    COLOR_CYAN);
   init_pair(7,  COLOR_RED,     COLOR_CYAN);
-  init_pair(8,  COLOR_GREEN,   COLOR_CYAN);
-  init_pair(9,  COLOR_BLUE,    COLOR_MAGENTA);
-  init_pair(10, COLOR_RED,     COLOR_MAGENTA);
-  init_pair(11, COLOR_GREEN,   COLOR_MAGENTA);
+  init_pair(8,  COLOR_MAGENTA, COLOR_CYAN);
+  init_pair(9,  COLOR_BLUE,    COLOR_GREEN);
+  init_pair(10, COLOR_RED,     COLOR_GREEN);
+  init_pair(11, COLOR_MAGENTA, COLOR_GREEN);
   init_pair(12, COLOR_BLUE,    COLOR_YELLOW);
   init_pair(13, COLOR_RED,     COLOR_YELLOW);
-  init_pair(14, COLOR_GREEN,   COLOR_YELLOW);
+  init_pair(14, COLOR_MAGENTA, COLOR_YELLOW);
   curs_set(0);
   cbreak();
   noecho();
