@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 1/5/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 2/5/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -14,9 +14,9 @@
 #define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
-#define BASIC_COSINE_RULE       // equivalent to four basic linear rules
-//#define EXTRA_RULES_1         // some extra tests that could be superfluous
-//#define EXTRA_RULES_2         // some additional such tests
+#define BASIC_RULES_1           // Some basic linear rules
+#define BASIC_RULES_2           // Some more basic linear rules
+#define BASIC_RULES_3           // Even more basic linear rules
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 //#define MAX_RULES             // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
@@ -210,25 +210,25 @@ int main(int argc, char **argv) {
         D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
 #endif
         if (
-#ifdef BASIC_COSINE_RULE
-          H > 0
+#ifdef BASIC_RULES_1
+                alpha +  beta + gamma < 2*pi &&
+                alpha <  beta + gamma &&
+                beta  < gamma + alpha &&
+                gamma < alpha +  beta
 #else
-          alpha +  beta + gamma < 2*pi &&
-          alpha <  beta + gamma &&
-          beta  < gamma + alpha &&
-          gamma < alpha +  beta
+                H > 0
 #endif
-#ifdef EXTRA_RULES_1
-          &&
-          A + beta + gamma  < 2*pi &&
-          alpha + B + gamma < 2*pi &&
-          alpha + beta + C  < 2*pi
+#ifdef BASIC_RULES_2
+                &&
+                A + beta + gamma  < 2*pi &&
+                alpha + B + gamma < 2*pi &&
+                alpha + beta + C  < 2*pi
 #endif
-#ifdef EXTRA_RULES_2
-          &&
-          beta  + gamma - alpha < 2*(B+C) &&
-          gamma + alpha -  beta < 2*(C+A) &&
-          alpha +  beta - gamma < 2*(A+B)
+#ifdef BASIC_RULES_3
+                &&
+                beta  + gamma - alpha < 2*(B+C) &&
+                gamma + alpha -  beta < 2*(C+A) &&
+                alpha +  beta - gamma < 2*(A+B)
 #endif
 #ifdef ACUTE_TESTING
 #ifdef MAX_RULES
