@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 1/5/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 2/5/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -23,9 +23,9 @@
 //#define N 100                 // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
-//#define BASIC_COSINE_RULE     // equivalent to four basic linear rules
-#define EXTRA_RULES_1           // some extra tests that could be superfluous
-#define EXTRA_RULES_2           // some additional such tests
+#define BASIC_RULES_1           // Some basic linear rules
+#define BASIC_RULES_2           // Some more basic linear rules
+#define BASIC_RULES_3           // Even more basic linear rules
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
@@ -199,21 +199,21 @@ int main(int argc, char **argv) {
               flags1[i][j][k] = (H < 0);
               flags2[i][j][k] = (D < 0);
               if (
-#ifdef BASIC_COSINE_RULE
-                H > 0
-#else
+#ifdef BASIC_RULES_1
                 alpha +  beta + gamma < 2*pi &&
                 alpha <  beta + gamma &&
                 beta  < gamma + alpha &&
                 gamma < alpha +  beta
+#else
+                H > 0
 #endif
-#ifdef EXTRA_RULES_1
+#ifdef BASIC_RULES_2
                 &&
                 A + beta + gamma  < 2*pi &&
                 alpha + B + gamma < 2*pi &&
                 alpha + beta + C  < 2*pi
 #endif
-#ifdef EXTRA_RULES_2
+#ifdef BASIC_RULES_3
                 &&
                 beta  + gamma - alpha < 2*(B+C) &&
                 gamma + alpha -  beta < 2*(C+A) &&
