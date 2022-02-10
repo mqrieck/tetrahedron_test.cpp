@@ -6,8 +6,8 @@
 // Note: You need the ncurses library, and should then be able to compile at the command
 // line using something like this:
 //
-//     g++ -c extended_dynamic_test.cpp
-//     g++ extended_dymanic_test.o -lncurses -o test
+//     g++ -c dynamic_tetrahedron_test.cpp
+//     g++ dynamic_tetrahedron_test.o -lncurses -o test
 //     ./test
 //
 // (You will need a sufficiently large virtual terminal screen and a small enough font.)
