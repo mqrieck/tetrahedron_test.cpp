@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 2/5/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 2/10/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -14,6 +14,8 @@
 #define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
+#define TOL1 0.05               // tolerance for some inequalities
+#define TOL2 1e-50              // tolerance for some other inequalities
 #define BASIC_RULES_1           // Some basic linear rules
 #define BASIC_RULES_2           // Some more basic linear rules
 #define BASIC_RULES_3           // Even more basic linear rules
@@ -53,6 +55,7 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     sin_delta1 = sqrt(1 - cos_delta1*cos_delta1);
     sin_delta2 = sqrt(1 - cos_delta2*cos_delta2);
     sin_delta3 = sqrt(1 - cos_delta3*cos_delta3);
+    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) { rejected++; return false; }
     alpha = acos((cos_delta1 + cos_delta2 * cos_delta3) / (sin_delta2 * sin_delta3));
     beta  = acos((cos_delta2 + cos_delta3 * cos_delta1) / (sin_delta3 * sin_delta1));
     gamma = acos((cos_delta3 + cos_delta1 * cos_delta2) / (sin_delta1 * sin_delta2));
@@ -96,8 +99,8 @@ void show_array(int a[N][N][N], int i0, int j0, int k0) {
 int main(int argc, char **argv) {
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y,
     choice, delta_i, delta_j, delta_k;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05;
-  double x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den,
+    x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
     H, L, R, E, D, G1, G2, G3;
   bool accept;
 #ifdef COMPLEX_GRUNERT_DISCR
