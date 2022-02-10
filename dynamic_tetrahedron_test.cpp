@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 2/5/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 2/10/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -23,14 +23,16 @@
 //#define N 100                 // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
+#define TOL1 0.05               // tolerance for some inequalities
+#define TOL2 1e-50              // tolerance for some other inequalities
 #define BASIC_RULES_1           // Some basic linear rules
 #define BASIC_RULES_2           // Some more basic linear rules
 #define BASIC_RULES_3           // Even more basic linear rules
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-//#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
-#define GRUNERT_DISCR_RULE_2    // a more restictive version of that (unnecessary)
+#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
+//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 6               // how much refinement?
@@ -64,6 +66,7 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     sin_delta1 = sqrt(1 - cos_delta1*cos_delta1);
     sin_delta2 = sqrt(1 - cos_delta2*cos_delta2);
     sin_delta3 = sqrt(1 - cos_delta3*cos_delta3);
+    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) { rejected++; return false; }
     alpha = acos((cos_delta1 + cos_delta2 * cos_delta3) / (sin_delta2 * sin_delta3));
     beta  = acos((cos_delta2 + cos_delta3 * cos_delta1) / (sin_delta3 * sin_delta1));
     gamma = acos((cos_delta3 + cos_delta1 * cos_delta2) / (sin_delta1 * sin_delta2));
@@ -82,7 +85,7 @@ inline int ind(double angle) {
 int main(int argc, char **argv) {
   int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y,
     choice, delta_i, delta_j, delta_k;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, tol = 0.05,
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den,
     x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
     H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3;
   char ch, chars[N][N][N];
@@ -402,49 +405,49 @@ int main(int argc, char **argv) {
         for(k=0, y=STARTY; k < N; k++, y++) {
           gamma = (k+.5)*pi/N;
           switch(choice) {
-             case 3: if (fabs(alpha + beta + gamma - 2*pi) < tol) {
+             case 3: if (fabs(alpha + beta + gamma - 2*pi) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  4: if (fabs(beta + gamma - alpha) < tol) {
+             case  4: if (fabs(beta + gamma - alpha) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  5: if (fabs(gamma + alpha - beta) < tol) {
+             case  5: if (fabs(gamma + alpha - beta) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  6: if (fabs(alpha + beta - gamma) < tol) {
+             case  6: if (fabs(alpha + beta - gamma) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  7: if (fabs(A + beta + gamma - 2*pi) < tol) {
+             case  7: if (fabs(A + beta + gamma - 2*pi) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  8: if (fabs(alpha + B + gamma - 2*pi) < tol) {
+             case  8: if (fabs(alpha + B + gamma - 2*pi) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  9: if (fabs(alpha + beta + C - 2*pi) < tol) {
+             case  9: if (fabs(alpha + beta + C - 2*pi) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 10: if (fabs(alpha - beta + C) < tol) {
+             case 10: if (fabs(alpha - beta + C) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 11: if (fabs(alpha + B - gamma) < tol) {
+             case 11: if (fabs(alpha + B - gamma) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 12: if (fabs(A - beta + gamma) < tol) {
+             case 12: if (fabs(A - beta + gamma) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 13: if (fabs(A + beta - gamma) < tol) {
+             case 13: if (fabs(A + beta - gamma) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 14: if (fabs(cos(C)*cos(beta) + cos(B)*cos(gamma)) < tol/2) {
+             case 14: if (fabs(cos(C)*cos(beta) + cos(B)*cos(gamma)) < TOL1/2) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 15: if (fabs(cos(A)*cos(gamma) + cos(C)*cos(alpha)) < tol/2) {
+             case 15: if (fabs(cos(A)*cos(gamma) + cos(C)*cos(alpha)) < TOL1/2) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 16: if (fabs(cos(B)*cos(alpha) + cos(A)*cos(beta)) < tol/2) {
+             case 16: if (fabs(cos(B)*cos(alpha) + cos(A)*cos(beta)) < TOL1/2) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case 17: if (fabs((alpha+B-C)*beta + (alpha+C-B)*gamma - alpha*(alpha+B+C)) < tol) {
+             case 17: if (fabs((alpha+B-C)*beta + (alpha+C-B)*gamma - alpha*(alpha+B+C)) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
           }
