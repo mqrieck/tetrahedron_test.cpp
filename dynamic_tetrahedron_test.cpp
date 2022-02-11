@@ -17,10 +17,10 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
-#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 40                    // how fine to subdivide the interval [0, pi]
-//#define M 2000                // how many (alpha, beta, gamma) points (M^3)?
-//#define N 100                 // how fine to subdivide the interval [0, pi]
+//#define M 1000                // how many (alpha, beta, gamma) points (M^3)?
+//#define N 40                  // how fine to subdivide the interval [0, pi]
+#define M 2400                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
