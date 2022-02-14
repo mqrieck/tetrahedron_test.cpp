@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 2/10/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 2/13/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -23,10 +23,10 @@
 //#define MAX_RULES             // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
-//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
+//#define GRUNERT_DISCR_RULE_2  // a possibly more restictive version of that
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 6               // how much refinement?
+#define REF_NUM 5               // how much refinement?
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 #include <cstdio>
@@ -176,12 +176,12 @@ int main(int argc, char **argv) {
       for (int k=0; k<N; k++) {
 #ifdef REFINED
         accept = false;
-        for (delta_i=0; delta_i<=REF_NUM; delta_i++)
-          for (delta_j=0; delta_j<=REF_NUM; delta_j++)
-            for (delta_k=0; delta_k<=REF_NUM; delta_k++) {
-              alpha = (i+(double)delta_i/REF_NUM)*pi/N;
-              beta  = (j+(double)delta_j/REF_NUM)*pi/N;
-              gamma = (k+(double)delta_k/REF_NUM)*pi/N;
+        for (delta_i=1; delta_i<=REF_NUM; delta_i++)
+          for (delta_j=1; delta_j<=REF_NUM; delta_j++)
+            for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
+              alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
+              beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
+              gamma = (k+(double)delta_k/(1+REF_NUM))*pi/N;
 #else
               alpha = (i+0.5)*pi/N;
               beta  = (j+0.5)*pi/N;
