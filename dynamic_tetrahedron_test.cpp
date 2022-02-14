@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 2/10/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 2/13/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -25,6 +25,7 @@
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
 #define TOL2 1e-50              // tolerance for some other inequalities
+//#define EXTRA_LOW_PLANES      // use more low elevation tilt planes
 #define BASIC_RULES_1           // Some basic linear rules
 #define BASIC_RULES_2           // Some more basic linear rules
 #define BASIC_RULES_3           // Even more basic linear rules
@@ -32,10 +33,10 @@
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
-//#define GRUNERT_DISCR_RULE_2  // a more restictive version of that (unnecessary)
+//#define GRUNERT_DISCR_RULE_2  // a possibly more restictive version of that
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 6               // how much refinement?
+#define REF_NUM 5               // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
@@ -73,6 +74,10 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     if (alpha < 0 || alpha > pi || beta < 0 || beta > pi || gamma < 0 || gamma > pi ||
       alpha > beta+gamma || beta > gamma+alpha || gamma > alpha+beta || alpha+beta+
         gamma > 2*pi) { rejected++; return false; } else return true;
+}
+
+inline double f(double x) {
+  return pi*(1-cos(x))/2;
 }
 
 inline int ind(double angle) {
@@ -153,20 +158,25 @@ int main(int argc, char **argv) {
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
       for (k=O; k<M-O; k++)
+#ifdef EXTRA_LOW_PLANES
+        if (tilt_to_view_angles(f(i*pi/M), f(j*pi/M), f(k*pi/M), cosA, cosB, cosC, alpha,
+          beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
+#else
         if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
+#endif
   // Also use an array to record which cells in the array are within system of bounds
   for (i=0; i<N; i++)
     for (j=0; j<N; j++)
       for (k=0; k<N; k++) {
 #ifdef REFINED
         accept = false;
-        for (delta_i=0; delta_i<=REF_NUM; delta_i++)
-          for (delta_j=0; delta_j<=REF_NUM; delta_j++)
-            for (delta_k=0; delta_k<=REF_NUM; delta_k++) {
-              alpha = (i+(double)delta_i/REF_NUM)*pi/N;
-              beta  = (j+(double)delta_j/REF_NUM)*pi/N;
-              gamma = (k+(double)delta_k/REF_NUM)*pi/N;
+        for (delta_i=1; delta_i<=REF_NUM; delta_i++)
+          for (delta_j=1; delta_j<=REF_NUM; delta_j++)
+            for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
+              alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
+              beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
+              gamma = (k+(double)delta_k/(1+REF_NUM))*pi/N;
 #else
               alpha = (i+0.5)*pi/N;
               beta  = (j+0.5)*pi/N;
