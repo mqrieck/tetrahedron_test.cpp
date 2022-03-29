@@ -19,6 +19,8 @@
 //    Number of   occupied unallowable cells:       44
 //    Number of unoccupied unallowable cells:   798535
 //
+// This means that out of 980000 cells, there were 54 incorrect results. This is an error
+// rate of 54 / 980000 = 0.000055. By increasing M and REF_NUM, this can be reduced.
 
 #define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, pi]
