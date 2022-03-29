@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 2/13/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 3/29/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -17,14 +17,15 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
-//#define M 1000                // how many (alpha, beta, gamma) points (M^3)?
-//#define N 40                  // how fine to subdivide the interval [0, pi]
-#define M 2400                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 100                   // how fine to subdivide the interval [0, pi]
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 40                    // how fine to subdivide the interval [0, pi]
+//#define M 2400                // how many (alpha, beta, gamma) points (M^3)?
+//#define N 100                 // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
-#define TOL2 1e-50              // tolerance for some other inequalities
+#define TOL2 0                  // tolerance for some other inequalities
+#define RESTRICT_DATA           // reject potentially troublesome data points
 //#define EXTRA_LOW_PLANES      // use more low elevation tilt planes
 #define BASIC_RULES_1           // Some basic linear rules
 #define BASIC_RULES_2           // Some more basic linear rules
@@ -67,13 +68,19 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     sin_delta1 = sqrt(1 - cos_delta1*cos_delta1);
     sin_delta2 = sqrt(1 - cos_delta2*cos_delta2);
     sin_delta3 = sqrt(1 - cos_delta3*cos_delta3);
-    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) { rejected++; return false; }
+#ifdef RESTRICT_DATA
+    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) 
+      { rejected++; return false; }
+#endif
     alpha = acos((cos_delta1 + cos_delta2 * cos_delta3) / (sin_delta2 * sin_delta3));
     beta  = acos((cos_delta2 + cos_delta3 * cos_delta1) / (sin_delta3 * sin_delta1));
     gamma = acos((cos_delta3 + cos_delta1 * cos_delta2) / (sin_delta1 * sin_delta2));
+#ifdef RESTRICT_DATA
     if (alpha < 0 || alpha > pi || beta < 0 || beta > pi || gamma < 0 || gamma > pi ||
       alpha > beta+gamma || beta > gamma+alpha || gamma > alpha+beta || alpha+beta+
-        gamma > 2*pi) { rejected++; return false; } else return true;
+        gamma > 2*pi) { rejected++; return false; } 
+#endif
+    return true;
 }
 
 inline double f(double x) {
