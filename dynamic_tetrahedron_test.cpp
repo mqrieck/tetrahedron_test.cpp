@@ -17,6 +17,8 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
+// Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). 
+
 #define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 40                    // how fine to subdivide the interval [0, pi]
 //#define M 2400                // how many (alpha, beta, gamma) points (M^3)?
