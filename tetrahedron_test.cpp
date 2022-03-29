@@ -12,7 +12,7 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). Using the 
 // settings M = 2000, N = 100 and REF_NUM = 40, and working with the equilateral triangle case, 
-// it should take less than two hours to produce the following results: 
+// it should take a couple hours or less to produce the following results: 
 //
 //    Number of   occupied   allowable cells:   181411
 //    Number of unoccupied   allowable cells:       10
