@@ -10,15 +10,15 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
-// Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). Using the 
-// settings M = 2000, N = 100 and REF_NUM = 40, and working with the equilateral triangle case, 
-// it should take a couple hours or less to produce the following results: 
+// Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). Using the
+// settings M = 2000, N = 100 and REF_NUM = 40, and working with the equilateral triangle case,
+// it should take a couple hours or less to produce the following results:
 //
 //    Number of   occupied   allowable cells:   181411
 //    Number of unoccupied   allowable cells:       10
 //    Number of   occupied unallowable cells:       44
 //    Number of unoccupied unallowable cells:   798535
-//    
+//
 
 #define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, pi]
