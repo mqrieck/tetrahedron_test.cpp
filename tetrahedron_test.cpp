@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 2/13/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 3/29/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -10,23 +10,27 @@
 // Note: This C++ program uses passing-by-reference. It can be easily converted to a C
 // program by altering this aspect of function call, and by changing the includes.
 
-#define M 1500                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 50                    // how fine to subdivide the interval [0, pi]
+// Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). 
+
+#define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 100                   // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
-#define TOL2 1e-50              // tolerance for some other inequalities
+#define TOL2 0                  // tolerance for some other inequalities
+//#define RESTRICT_DATA         // reject potentially troublesome data points
 #define BASIC_RULES_1           // Some basic linear rules
 #define BASIC_RULES_2           // Some more basic linear rules
 #define BASIC_RULES_3           // Even more basic linear rules
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
-//#define MAX_RULES             // some testing based on toroid analysis
+#define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
 //#define GRUNERT_DISCR_RULE_2  // a possibly more restictive version of that
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 5               // how much refinement?
+#define REF_NUM 60              // how much refinement?
+//#define SHOW_ARRAY		// display the slices
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
 #include <cstdio>
@@ -41,7 +45,7 @@ using namespace std;
 
 // Obtain the "view angles" at P based on triangle ABC and three "tilt angles" (the tau's).
 // Each tilt angle is the dihedral angle between the ABC side and another side of the
-// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles at P, i.e., 
+// tetrahedron ABCP. Dihedral angle formulas are used to find the view angles at P, i.e.,
 // the angles alpha = <BPC, beta = <CPA, and gamma = <APB.
 bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, double cosB,
   double cosC, double& alpha, double& beta, double& gamma, int& rejected) {
@@ -55,13 +59,19 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     sin_delta1 = sqrt(1 - cos_delta1*cos_delta1);
     sin_delta2 = sqrt(1 - cos_delta2*cos_delta2);
     sin_delta3 = sqrt(1 - cos_delta3*cos_delta3);
-    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) { rejected++; return false; }
+#ifdef RESTRICT_DATA
+    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) 
+      { rejected++; return false; }
+#endif
     alpha = acos((cos_delta1 + cos_delta2 * cos_delta3) / (sin_delta2 * sin_delta3));
     beta  = acos((cos_delta2 + cos_delta3 * cos_delta1) / (sin_delta3 * sin_delta1));
     gamma = acos((cos_delta3 + cos_delta1 * cos_delta2) / (sin_delta1 * sin_delta2));
+#ifdef RESTRICT_DATA
     if (alpha < 0 || alpha > pi || beta < 0 || beta > pi || gamma < 0 || gamma > pi ||
       alpha > beta+gamma || beta > gamma+alpha || gamma > alpha+beta || alpha+beta+
-        gamma > 2*pi) { rejected++; return false; } else return true;
+        gamma > 2*pi) { rejected++; return false; } 
+#endif
+    return true;
 }
 
 inline int ind(double angle) {
@@ -78,7 +88,7 @@ void show_array(int a[N][N][N], int i0, int j0, int k0) {
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
 #ifdef SHOW_CUTOFFS
-        if (i==i0 || j==j0 || k==k0) printf("#"); else  
+        if (i==i0 || j==j0 || k==k0) printf("#"); else
 #endif
         switch (a[i][j][k]) {
           case 0:  printf("."); break;  // a "prohibited" cell that is empty
@@ -275,7 +285,9 @@ int main(int argc, char **argv) {
 #endif
   }
   // Show slices of the array, indicating the nature of each cell.
+#ifdef SHOW_ARRAY
   show_array(states, i0, j0, k0);
+#endif
   // Compute and display statistices for the given triangle ABC.
   total = count0 = count1 = count2 = count3 = 0;
   for (int i=0; i<N-2; i++)
