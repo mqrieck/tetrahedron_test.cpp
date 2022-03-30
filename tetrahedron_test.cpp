@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 3/29/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 3/30/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -14,13 +14,14 @@
 // settings M = 2000, N = 100 and REF_NUM = 40, and working with the equilateral triangle case,
 // it should take a couple hours or less to produce the following results:
 //
-//    Number of   occupied   allowable cells:   181411
+//    Number of   occupied   allowable cells:   181453
 //    Number of unoccupied   allowable cells:       10
-//    Number of   occupied unallowable cells:       44
+//    Number of   occupied unallowable cells:        2
 //    Number of unoccupied unallowable cells:   798535
 //
-// This means that out of 980000 cells, there were 54 incorrect results. This is an error
-// rate of 54 / 980000 = 0.000055. By increasing M and REF_NUM, this can be reduced.
+// This means that out of 980000 cells, there were 12 incorrect results. This is an error
+// rate of 54 / 980000 = 0.000012. By increasing M and REF_NUM, this can be reduced.
+// Similar results can be obtained for other acute triangles.
 
 #define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, pi]
@@ -116,12 +117,98 @@ void show_array(int a[N][N][N], int i0, int j0, int k0) {
   printf("\n");
 }
 
+bool test_bounds(double A, double B, double C, double cosA, double cosB, double cosC, double x1, double x2, double x3,
+ double y1, double y2, double y3, double alpha, double beta, double gamma) {
+  double cos_alpha, cos_beta, cos_gamma, c1, c2, c3, C0, C1, C2, C3, H, L, R, E, D, G1, G2, G3;
+  bool accept;
+  cos_alpha = cos(alpha);
+  cos_beta  = cos(beta);
+  cos_gamma = cos(gamma);
+  // The following formulas come from my "Grunert" paper and from my paper with Bo Wang
+  c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
+  C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
+  H = 1 - C1 - C2 - C3 + 2*C0;
+#ifdef COMPLEX_GRUNERT_DISCR
+  G1 = (cosA*(cosA+cosB*cosC) + (1-cosA*cosA)*C0)/(1+cosA*cosB*cosC) - C1;
+  G2 = (cosB*(cosB+cosC*cosA) + (1-cosB*cosB)*C0)/(1+cosA*cosB*cosC) - C2;
+  G3 = (cosC*(cosC+cosA*cosB) + (1-cosC*cosC)*C0)/(1+cosA*cosB*cosC) - C3;
+  xi = ( (zeta1*zeta1 + two*zeta2*zeta3) * G1 +
+         (zeta2*zeta2 + two*zeta3*zeta1) * G2 +
+         (zeta3*zeta3 + two*zeta1*zeta2) * G3 ) / H;
+  xi_cubed = xi*xi*xi;
+  xi_cubed_conj = conj(xi_cubed);
+  D_complex = ( xi_norm*xi_norm - four * ( zeta_prod_sqr_conj*xi_cubed +
+    zeta_prod_sqr*xi_cubed_conj ) + eighteen*xi_norm - twenty_seven ) * H*H*H*H;
+  D = real(D_complex);
+#else
+  L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
+  R = 2 * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
+  E = L*L + (R+H)*(R+H);
+  D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
+#endif
+  accept = (
+#ifdef BASIC_RULES_1
+    alpha +  beta + gamma < 2*pi &&
+    alpha <  beta + gamma &&
+    beta  < gamma + alpha &&
+    gamma < alpha +  beta
+#else
+    H > 0
+#endif
+#ifdef BASIC_RULES_2
+    &&
+    A + beta + gamma  < 2*pi &&
+    alpha + B + gamma < 2*pi &&
+    alpha + beta + C  < 2*pi
+#endif
+#ifdef BASIC_RULES_3
+    &&
+    beta  + gamma - alpha < 2*(B+C) &&
+    gamma + alpha -  beta < 2*(C+A) &&
+    alpha +  beta - gamma < 2*(A+B)
+#endif
+#ifdef ACUTE_TESTING
+#ifdef MAX_RULES
+    &&
+    (alpha >= A || beta  < B || beta  < C + alpha) &&
+    (alpha >= A || gamma < C || gamma < B + alpha) &&
+    (beta  >= B || gamma < C || gamma < A + beta ) &&
+    (beta  >= B || alpha < A || alpha < C + beta ) &&
+    (gamma >= C || alpha < A || alpha < B + gamma) &&
+    (gamma >= C || beta  < B || beta  < A + gamma)
+#endif
+#ifdef EASY_COSINE_RULES
+    &&
+    (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
+    (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
+    (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
+#endif
+#ifdef GRUNERT_DISCR_RULE_1
+    && // if outside the CSDC then cannot be inside exactly two of the basic toroids
+    ( D < 0 || (
+      (alpha >= A || beta <  B || gamma <  C) &&
+      (alpha <  A || beta >= B || gamma <  C) &&
+      (alpha <  A || beta <  B || gamma >= C) ) )
+#endif
+#ifdef GRUNERT_DISCR_RULE_2
+    && // if outside the CSDC then cannot be inside exactly two of the basic toroids
+       // nor inside all three basic toroids and outside their supplementary toroids
+    ( D < 0 || ! (
+      (alpha <  A && beta >= B && gamma >= C)  ||
+      (alpha >= A && beta <  B && gamma >= C)  ||
+      (alpha >= A && beta >= B && gamma  < C)  ||
+      (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) )))
+#endif
+#endif
+  );
+  return accept;
+}
+
 int main(int argc, char **argv) {
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y,
-    choice, delta_i, delta_j, delta_k;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den,
-    x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
-    H, L, R, E, D, G1, G2, G3;
+  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k,
+    x, y, choice, delta_i, delta_j, delta_k;
+  double A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, x10, x20, x30, y10, y20, y30,
+    alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, cos_turn, sin_turn;
   bool accept;
 #ifdef COMPLEX_GRUNERT_DISCR
   complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27, zeta1, zeta2, zeta3, zeta1conj, zeta2conj,
@@ -188,112 +275,36 @@ int main(int argc, char **argv) {
   for (int i=O; i<M-O; i++)
     for (int j=O; j<M-O; j++)
       for (int k=O; k<M-O; k++)
-        if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha, beta, gamma, rejected))
+        if ( tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha, beta, gamma, rejected) ) {
           states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
+          if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
+            states[ind(alpha)][ind(beta)][ind(gamma)] += 2;
+        }
   // Also use array to record which cells in the array are within system of bounds
   for (int i=0; i<N; i++)
     for (int j=0; j<N; j++)
-      for (int k=0; k<N; k++) {
+      for (int k=0; k<N; k++)
+        if (states[i][j][k] < 2) {
 #ifdef REFINED
-        accept = false;
-        for (delta_i=1; delta_i<=REF_NUM; delta_i++)
-          for (delta_j=1; delta_j<=REF_NUM; delta_j++)
-            for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
-              alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
-              beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
-              gamma = (k+(double)delta_k/(1+REF_NUM))*pi/N;
+          accept = false;
+          for (delta_i=1; !accept && delta_i<=REF_NUM; delta_i++)
+            for (delta_j=1; !accept && delta_j<=REF_NUM; delta_j++)
+              for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
+                alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
+                beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
+                gamma = (k+(double)delta_k/(1+REF_NUM))*pi/N;
+                if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
+                  { accept = true; break; }
+              }
+          if (accept) states[i][j][k] += 2;
 #else
-              alpha = (i+0.5)*pi/N;
-              beta  = (j+0.5)*pi/N;
-              gamma = (k+0.5)*pi/N;
+          alpha = (i+0.5)*pi/N;
+          beta  = (j+0.5)*pi/N;
+          gamma = (k+0.5)*pi/N;
+          if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3,
+            alpha, beta, gamma) ) states[i][j][k] += 2;
 #endif
-        cos_alpha = cos(alpha);
-        cos_beta  = cos(beta);
-        cos_gamma = cos(gamma);
-        // The following formulas come from my "Grunert" paper and from my paper with Bo Wang
-        c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
-        C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
-        H = 1 - C1 - C2 - C3 + 2*C0;
-#ifdef COMPLEX_GRUNERT_DISCR
-        G1 = (cosA*(cosA+cosB*cosC) + (1-cosA*cosA)*C0)/(1+cosA*cosB*cosC) - C1;
-        G2 = (cosB*(cosB+cosC*cosA) + (1-cosB*cosB)*C0)/(1+cosA*cosB*cosC) - C2;
-        G3 = (cosC*(cosC+cosA*cosB) + (1-cosC*cosC)*C0)/(1+cosA*cosB*cosC) - C3;
-        xi = ( (zeta1*zeta1 + two*zeta2*zeta3) * G1 +
-               (zeta2*zeta2 + two*zeta3*zeta1) * G2 +
-               (zeta3*zeta3 + two*zeta1*zeta2) * G3 ) / H;
-        xi_cubed = xi*xi*xi;
-        xi_cubed_conj = conj(xi_cubed);
-        D_complex = ( xi_norm*xi_norm - four * ( zeta_prod_sqr_conj*xi_cubed +
-          zeta_prod_sqr*xi_cubed_conj ) + eighteen*xi_norm - twenty_seven ) * H*H*H*H;
-        D = real(D_complex);
-#else
-        L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
-        R = 2 * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
-        E = L*L + (R+H)*(R+H);
-        D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
-#endif
-        if (
-#ifdef BASIC_RULES_1
-                alpha +  beta + gamma < 2*pi &&
-                alpha <  beta + gamma &&
-                beta  < gamma + alpha &&
-                gamma < alpha +  beta
-#else
-                H > 0
-#endif
-#ifdef BASIC_RULES_2
-                &&
-                A + beta + gamma  < 2*pi &&
-                alpha + B + gamma < 2*pi &&
-                alpha + beta + C  < 2*pi
-#endif
-#ifdef BASIC_RULES_3
-                &&
-                beta  + gamma - alpha < 2*(B+C) &&
-                gamma + alpha -  beta < 2*(C+A) &&
-                alpha +  beta - gamma < 2*(A+B)
-#endif
-#ifdef ACUTE_TESTING
-#ifdef MAX_RULES
-          &&
-          (alpha >= A || beta  < B || beta  < C + alpha) &&
-          (alpha >= A || gamma < C || gamma < B + alpha) &&
-          (beta  >= B || gamma < C || gamma < A + beta ) &&
-          (beta  >= B || alpha < A || alpha < C + beta ) &&
-          (gamma >= C || alpha < A || alpha < B + gamma) &&
-          (gamma >= C || beta  < B || beta  < A + gamma)
-#endif
-#ifdef EASY_COSINE_RULES
-          &&
-          (alpha >= A || cosC * cos_beta  + cosB * cos_gamma > 0) &&
-          (beta  >= B || cosA * cos_gamma + cosC * cos_alpha > 0) &&
-          (gamma >= C || cosB * cos_alpha + cosA * cos_beta  > 0)
-#endif
-#ifdef GRUNERT_DISCR_RULE_1
-          && // if outside the CSDC then cannot be inside exactly two of the basic toroids
-            ( D < 0 || (
-              (alpha >= A || beta <  B || gamma <  C) &&
-              (alpha <  A || beta >= B || gamma <  C) &&
-              (alpha <  A || beta <  B || gamma >= C) ) )
-#endif
-#ifdef GRUNERT_DISCR_RULE_2
-           && // if outside the CSDC then cannot be inside exactly two of the basic toroids
-              // nor inside all three basic toroids and outside their supplementary toroids
-            ( D < 0 || ! (
-              (alpha <  A && beta >= B && gamma >= C)  ||
-              (alpha >= A && beta <  B && gamma >= C)  ||
-              (alpha >= A && beta >= B && gamma  < C)  ||
-              (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ))
-#endif
-#endif
-#ifdef REFINED
-              ) { accept = true; break; }
         }
-        if (accept) states[i][j][k] += 2;
-#else
-              ) states[i][j][k] += 2;
-#endif
-  }
   // Show slices of the array, indicating the nature of each cell.
 #ifdef SHOW_ARRAY
   show_array(states, i0, j0, k0);
