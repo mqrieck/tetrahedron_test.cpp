@@ -47,9 +47,6 @@
 #include <cstdlib>
 #include <cmath>
 #include <ncurses.h>
-#ifdef COMPLEX_GRUNERT_DISCR
-#include <complex>
-#endif
 
 using namespace std;
 
