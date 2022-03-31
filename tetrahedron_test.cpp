@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 3/30/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 3/31/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -11,20 +11,20 @@
 // program by altering this aspect of function call, and by changing the includes.
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). Using the
-// settings M = 2000, N = 100 and REF_NUM = 40, and working with the equilateral triangle case,
-// it should take a couple hours or less to produce the following results:
+// settings M = 700, N = 50 and REF_NUM = 10, and working with the equilateral triangle case,
+// it should take a few minutes to produce the following results:
 //
-//    Number of   occupied   allowable cells:   181453
-//    Number of unoccupied   allowable cells:       10
+//    Number of   occupied   allowable cells:    24648
+//    Number of unoccupied   allowable cells:        4
 //    Number of   occupied unallowable cells:        2
-//    Number of unoccupied unallowable cells:   798535
+//    Number of unoccupied unallowable cells:    95346
 //
-// This means that out of 980000 cells, there were 12 incorrect results. This is an error
-// rate of 54 / 980000 = 0.000012. By increasing M and REF_NUM, this can be reduced.
+// This means that out of 120000 cells, there were 6 incorrect results. This is an error
+// rate of 6 / 120000 = 0.00005. By increasing M and REF_NUM, this number can be reduced.
 // Similar results can be obtained for other acute triangles.
 
-#define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 100                   // how fine to subdivide the interval [0, pi]
+#define M 700                   // how many (alpha, beta, gamma) points (M^3)?
+#define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
@@ -38,9 +38,8 @@
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
 #define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
 //#define GRUNERT_DISCR_RULE_2  // a possibly more restictive version of that
-//#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 40              // how much refinement?
+#define REF_NUM 10              // how much refinement?
 //#define SHOW_ARRAY		// display the slices
 //#define SHOW_CUTOFFS          // show when alpha = A, beta = B or gamma = C
 
@@ -119,7 +118,7 @@ void show_array(int a[N][N][N], int i0, int j0, int k0) {
 
 bool test_bounds(double A, double B, double C, double cosA, double cosB, double cosC, double x1, double x2, double x3,
  double y1, double y2, double y3, double alpha, double beta, double gamma) {
-  double cos_alpha, cos_beta, cos_gamma, c1, c2, c3, C0, C1, C2, C3, H, L, R, E, D, G1, G2, G3;
+  double cos_alpha, cos_beta, cos_gamma, c1, c2, c3, C0, C1, C2, C3, H, L, R, E, D;
   bool accept;
   cos_alpha = cos(alpha);
   cos_beta  = cos(beta);
@@ -128,24 +127,10 @@ bool test_bounds(double A, double B, double C, double cosA, double cosB, double 
   c1 = cos_alpha; c2 = cos_beta; c3 = cos_gamma;
   C0 = c1*c2*c3; C1 = c1*c1; C2 = c2*c2; C3 = c3*c3;
   H = 1 - C1 - C2 - C3 + 2*C0;
-#ifdef COMPLEX_GRUNERT_DISCR
-  G1 = (cosA*(cosA+cosB*cosC) + (1-cosA*cosA)*C0)/(1+cosA*cosB*cosC) - C1;
-  G2 = (cosB*(cosB+cosC*cosA) + (1-cosB*cosB)*C0)/(1+cosA*cosB*cosC) - C2;
-  G3 = (cosC*(cosC+cosA*cosB) + (1-cosC*cosC)*C0)/(1+cosA*cosB*cosC) - C3;
-  xi = ( (zeta1*zeta1 + two*zeta2*zeta3) * G1 +
-         (zeta2*zeta2 + two*zeta3*zeta1) * G2 +
-         (zeta3*zeta3 + two*zeta1*zeta2) * G3 ) / H;
-  xi_cubed = xi*xi*xi;
-  xi_cubed_conj = conj(xi_cubed);
-  D_complex = ( xi_norm*xi_norm - four * ( zeta_prod_sqr_conj*xi_cubed +
-    zeta_prod_sqr*xi_cubed_conj ) + eighteen*xi_norm - twenty_seven ) * H*H*H*H;
-  D = real(D_complex);
-#else
   L = 2 * ( (1-x1)*y1*(C1-1) + (1-x2)*y2*(C2-1) + (1-x3)*y3*(C3-1) + (  y1+y2+y3)*(1-C0) );
   R = 2 * ( (1+x1)*x1*(C1-1) + (1+x2)*x2*(C2-1) + (1+x3)*x3*(C3-1) + (1+x1+x2+x3)*(1-C0) );
   E = L*L + (R+H)*(R+H);
   D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
-#endif
   accept = (
 #ifdef BASIC_RULES_1
     alpha +  beta + gamma < 2*pi &&
@@ -210,10 +195,6 @@ int main(int argc, char **argv) {
   double A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, x10, x20, x30, y10, y20, y30,
     alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, cos_turn, sin_turn;
   bool accept;
-#ifdef COMPLEX_GRUNERT_DISCR
-  complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27, zeta1, zeta2, zeta3, zeta1conj, zeta2conj,
-    zeta3conj, zeta_prod, zeta_prod_sqr, zeta_prod_sqr_conj, xi, xi_conj, xi_norm, xi_cubed, xi_cubed_conj, D_complex;
-#endif
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -233,19 +214,7 @@ int main(int argc, char **argv) {
   x10 = 1; y10 = 0;
   x20 = cos(2*C); y20 =  sin(2*C);
   x30 = cos(2*B); y30 = -sin(2*B);
-#ifdef COMPLEX_GRUNERT_DISCR
-// Compute certain complex numbers if using this method
-  zeta1 = x10 + y10*1i;
-  zeta2 = x20 + y20*1i;
-  zeta3 = x30 + y30*1i;
-  zeta1conj = x10 - y10*1i;
-  zeta2conj = x20 - y20*1i;
-  zeta3conj = x30 - y30*1i;
-  zeta_prod = zeta1*zeta2*zeta3;
-  zeta_prod_sqr = zeta_prod*zeta_prod;
-  zeta_prod_sqr_conj = conj(zeta_prod_sqr);
-#else
-// Otherwise, turn all control points to achieve my standard orientation
+// Turn all control points to achieve my standard orientation
   cos_turn = cos(2*(B-C)/3);
   sin_turn = sin(2*(B-C)/3);
   x1 = x10 * cos_turn - y10 * sin_turn;
@@ -254,7 +223,6 @@ int main(int argc, char **argv) {
   y2 = x20 * sin_turn + y20 * cos_turn;
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
-#endif
   printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/pi, B/pi, C/pi);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
@@ -264,12 +232,13 @@ int main(int argc, char **argv) {
   printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
-  printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
-  printf("in the paper is presumed here.)\n\n");
+  printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\"\n\n");
+#ifdef SHOW_ARRAY
   printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary). When enabled, pound signs show where α = A, β = B or γ = C.\n\n");
+#endif
   printf("PLEASE WAIT (patience is a virtue) while data is being generated .... \n\n\n\n\n");
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
@@ -278,7 +247,7 @@ int main(int argc, char **argv) {
         if ( tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha, beta, gamma, rejected) ) {
           states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
           if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
-            states[ind(alpha)][ind(beta)][ind(gamma)] += 2;
+            states[ind(alpha)][ind(beta)][ind(gamma)] = 3;
         }
   // Also use array to record which cells in the array are within system of bounds
   for (int i=0; i<N; i++)
