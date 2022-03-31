@@ -36,8 +36,8 @@
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
-//#define GRUNERT_DISCR_RULE_2  // a possibly more restictive version of that
+//#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE_2    // a possibly more restictive version of that
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 10              // how much refinement?
 //#define SHOW_ARRAY		// display the slices
@@ -182,7 +182,7 @@ bool test_bounds(double A, double B, double C, double cosA, double cosB, double 
       (alpha <  A && beta >= B && gamma >= C)  ||
       (alpha >= A && beta <  B && gamma >= C)  ||
       (alpha >= A && beta >= B && gamma  < C)  ||
-      (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) )))
+      (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ) )
 #endif
 #endif
   );
