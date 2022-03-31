@@ -46,7 +46,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cmath>
-#include <ncurses.h>
 
 using namespace std;
 
