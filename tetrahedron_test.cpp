@@ -11,19 +11,18 @@
 // program by altering this aspect of function call, and by changing the includes.
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). Using the
-// settings M = 700, N = 50 and REF_NUM = 10, and working with the equilateral triangle case,
+// settings M = 1000, N = 50 and REF_NUM = 10, and working with the equilateral triangle case,
 // it should take a few minutes to produce the following results:
 //
-//    Number of   occupied   allowable cells:    24648
-//    Number of unoccupied   allowable cells:        4
+//    Number of   occupied   allowable cells:    24652
+//    Number of unoccupied   allowable cells:        0
 //    Number of   occupied unallowable cells:        2
 //    Number of unoccupied unallowable cells:    95346
 //
-// This means that out of 120000 cells, there were 6 incorrect results. This is an error
-// rate of 6 / 120000 = 0.00005. By increasing M and REF_NUM, this number can be reduced.
-// Similar results can be obtained for other acute triangles.
+// This means that out of 120000 cells, there were only 2 incorrect results. This is an error
+// rate of 2 / 120000 = 0.000017. Similar results can be obtained for other acute triangles.
 
-#define M 700                   // how many (alpha, beta, gamma) points (M^3)?
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 50                    // how fine to subdivide the interval [0, pi]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define pi M_PI                 // pi = 3.141592654..., of course
