@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 3/29/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 4/9/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -19,7 +19,7 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). 
 
-#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 500                   // how many (alpha, beta, gamma) points (M^3)?
 #define N 40                    // how fine to subdivide the interval [0, pi]
 //#define M 2400                // how many (alpha, beta, gamma) points (M^3)?
 //#define N 100                 // how fine to subdivide the interval [0, pi]
@@ -180,8 +180,8 @@ int main(int argc, char **argv) {
       for (k=0; k<N; k++) {
 #ifdef REFINED
         accept = false;
-        for (delta_i=1; delta_i<=REF_NUM; delta_i++)
-          for (delta_j=1; delta_j<=REF_NUM; delta_j++)
+        for (delta_i=1; !accept && delta_i<=REF_NUM; delta_i++)
+          for (delta_j=1; !accept && delta_j<=REF_NUM; delta_j++)
             for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
               alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
               beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
@@ -220,6 +220,7 @@ int main(int argc, char **argv) {
 #endif
               flags1[i][j][k] = (H < 0);
               flags2[i][j][k] = (D < 0);
+// Test the constraints in my papers concerning the angles A, B, C, alpha, beta and gamma
               if (
 #ifdef BASIC_RULES_1
                 alpha +  beta + gamma < 2*pi &&
