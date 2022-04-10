@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 3/31/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 4/9/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -65,7 +65,7 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     sin_delta2 = sqrt(1 - cos_delta2*cos_delta2);
     sin_delta3 = sqrt(1 - cos_delta3*cos_delta3);
 #ifdef RESTRICT_DATA
-    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2) 
+    if (abs(sin_delta1) < TOL2 || abs(sin_delta2) < TOL2 || abs(sin_delta3) < TOL2)
       { rejected++; return false; }
 #endif
     alpha = acos((cos_delta1 + cos_delta2 * cos_delta3) / (sin_delta2 * sin_delta3));
@@ -74,7 +74,7 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
 #ifdef RESTRICT_DATA
     if (alpha < 0 || alpha > pi || beta < 0 || beta > pi || gamma < 0 || gamma > pi ||
       alpha > beta+gamma || beta > gamma+alpha || gamma > alpha+beta || alpha+beta+
-        gamma > 2*pi) { rejected++; return false; } 
+        gamma > 2*pi) { rejected++; return false; }
 #endif
     return true;
 }
@@ -111,6 +111,7 @@ void show_array(int a[N][N][N], int i0, int j0, int k0) {
   printf("\n");
 }
 
+// Test the constraints in my papers concerning the angles A, B, C, alpha, beta and gamma
 bool test_bounds(double A, double B, double C, double cosA, double cosB, double cosC, double x1, double x2, double x3,
  double y1, double y2, double y3, double alpha, double beta, double gamma) {
   double cos_alpha, cos_beta, cos_gamma, c1, c2, c3, C0, C1, C2, C3, H, L, R, E, D;
@@ -165,19 +166,21 @@ bool test_bounds(double A, double B, double C, double cosA, double cosB, double 
 #endif
 #ifdef GRUNERT_DISCR_RULE_1
     && // if outside the CSDC then cannot be inside exactly two of the basic toroids
-    ( D < 0 || (
-      (alpha >= A || beta <  B || gamma <  C) &&
-      (alpha <  A || beta >= B || gamma <  C) &&
-      (alpha <  A || beta <  B || gamma >= C) ) )
+      ( D < 0 || (
+        (alpha >= A || beta <  B || gamma <  C) &&
+        (alpha <  A || beta >= B || gamma <  C) &&
+        (alpha <  A || beta <  B || gamma >= C)
+      ) )
 #endif
 #ifdef GRUNERT_DISCR_RULE_2
     && // if outside the CSDC then cannot be inside exactly two of the basic toroids
        // nor inside all three basic toroids and outside their supplementary toroids
-    ( D < 0 || ! (
-      (alpha <  A && beta >= B && gamma >= C)  ||
-      (alpha >= A && beta <  B && gamma >= C)  ||
-      (alpha >= A && beta >= B && gamma  < C)  ||
-      (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C) ) )
+      ( D < 0 || ! (
+        (alpha <  A && beta >= B && gamma >= C)  ||
+        (alpha >= A && beta <  B && gamma >= C)  ||
+        (alpha >= A && beta >= B && gamma  < C)  ||
+        (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C)
+      ) )
 #endif
 #endif
   );
@@ -265,8 +268,8 @@ int main(int argc, char **argv) {
           alpha = (i+0.5)*pi/N;
           beta  = (j+0.5)*pi/N;
           gamma = (k+0.5)*pi/N;
-          if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3,
-            alpha, beta, gamma) ) states[i][j][k] += 2;
+          if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
+            states[i][j][k] += 2;
 #endif
         }
   // Show slices of the array, indicating the nature of each cell.
