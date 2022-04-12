@@ -1,5 +1,5 @@
 
-// tetrahedron_test.cpp (by M. Q. Rieck, updated: 4/9/2022)
+// tetrahedron_test.cpp (by M. Q. Rieck, updated: 4/12/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -23,9 +23,9 @@
 // rate of 2 / 120000 = 0.000017. Similar results can be obtained for other acute triangles.
 
 #define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 50                    // how fine to subdivide the interval [0, pi]
+#define N 50                    // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
-#define pi M_PI                 // pi = 3.141592654..., of course
+#define PI M_PI                 // PI = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
 #define TOL2 0                  // tolerance for some other inequalities
 //#define RESTRICT_DATA         // reject potentially troublesome data points
@@ -72,15 +72,15 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     beta  = acos((cos_delta2 + cos_delta3 * cos_delta1) / (sin_delta3 * sin_delta1));
     gamma = acos((cos_delta3 + cos_delta1 * cos_delta2) / (sin_delta1 * sin_delta2));
 #ifdef RESTRICT_DATA
-    if (alpha < 0 || alpha > pi || beta < 0 || beta > pi || gamma < 0 || gamma > pi ||
+    if (alpha < 0 || alpha > PI || beta < 0 || beta > PI || gamma < 0 || gamma > PI ||
       alpha > beta+gamma || beta > gamma+alpha || gamma > alpha+beta || alpha+beta+
-        gamma > 2*pi) { rejected++; return false; }
+        gamma > 2*PI) { rejected++; return false; }
 #endif
     return true;
 }
 
 inline int ind(double angle) {
-  int i = (int) (N*angle/pi);
+  int i = (int) (N*angle/PI);
   if (i < 0) i = 0;
   if (i >= N) i = N-1;
   return i;
@@ -89,7 +89,7 @@ inline int ind(double angle) {
 void show_array(int a[N][N][N], int i0, int j0, int k0) {
   printf("\n");
   for (int i=0; i<N-2; i++) {
-    printf("α = %1.3f:\n", (i+.5)*pi/N);
+    printf("α = %1.3f:\n", (i+.5)*PI/N);
     for (int j=0; j<N; j++) {
       for (int k=0; k<N; k++) {
 #ifdef SHOW_CUTOFFS
@@ -129,7 +129,7 @@ bool test_bounds(double A, double B, double C, double cosA, double cosB, double 
   D = E*E + 18*E*H*H + 8*(R+H)*((R+H)*(R+H)-3*L*L)*H - 27*H*H*H*H;
   accept = (
 #ifdef BASIC_RULES_1
-    alpha +  beta + gamma < 2*pi &&
+    alpha +  beta + gamma < 2*PI &&
     alpha <  beta + gamma &&
     beta  < gamma + alpha &&
     gamma < alpha +  beta
@@ -138,9 +138,9 @@ bool test_bounds(double A, double B, double C, double cosA, double cosB, double 
 #endif
 #ifdef BASIC_RULES_2
     &&
-    A + beta + gamma  < 2*pi &&
-    alpha + B + gamma < 2*pi &&
-    alpha + beta + C  < 2*pi
+    A + beta + gamma  < 2*PI &&
+    alpha + B + gamma < 2*PI &&
+    alpha + beta + C  < 2*PI
 #endif
 #ifdef BASIC_RULES_3
     &&
@@ -179,7 +179,7 @@ bool test_bounds(double A, double B, double C, double cosA, double cosB, double 
         (alpha <  A && beta >= B && gamma >= C)  ||
         (alpha >= A && beta <  B && gamma >= C)  ||
         (alpha >= A && beta >= B && gamma  < C)  ||
-        (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C)
+        (alpha >= A && beta >= B && gamma >= C && alpha < PI-A && beta < PI-B && gamma < PI-C)
       ) )
 #endif
 #endif
@@ -197,10 +197,10 @@ int main(int argc, char **argv) {
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
     den = atoi(argv[1]) + atoi(argv[2]) + atoi(argv[3]);
-    A = atoi(argv[1])*pi / den;
-    B = atoi(argv[2])*pi / den;
-    C = atoi(argv[3])*pi / den;
-  } else A = B = C = pi/3;
+    A = atoi(argv[1])*PI / den;
+    B = atoi(argv[2])*PI / den;
+    C = atoi(argv[3])*PI / den;
+  } else A = B = C = PI/3;
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
 #ifdef SHOW_CUTOFFS
   i0 = ind(A); j0 = ind(B); k0 = ind(C);
@@ -221,13 +221,13 @@ int main(int argc, char **argv) {
   y2 = x20 * sin_turn + y20 * cos_turn;
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
-  printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/pi, B/pi, C/pi);
+  printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/PI, B/PI, C/PI);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
-  printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n"); 
+  printf("mistake. This can only happen at the boundary of the allowable portion of the cube.\n\n");
   printf("The allowable portion of the cube bounds all of the points (α, β, γ) for which α, β and γ can be the angles at\n");
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\"\n\n");
@@ -242,7 +242,7 @@ int main(int argc, char **argv) {
   for (int i=O; i<M-O; i++)
     for (int j=O; j<M-O; j++)
       for (int k=O; k<M-O; k++)
-        if ( tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha, beta, gamma, rejected) ) {
+        if ( tilt_to_view_angles(i*PI/M, j*PI/M, k*PI/M, cosA, cosB, cosC, alpha, beta, gamma, rejected) ) {
           states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
           if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
             states[ind(alpha)][ind(beta)][ind(gamma)] = 3;
@@ -254,20 +254,34 @@ int main(int argc, char **argv) {
         if (states[i][j][k] < 2) {
 #ifdef REFINED
           accept = false;
+
           for (delta_i=1; !accept && delta_i<=REF_NUM; delta_i++)
             for (delta_j=1; !accept && delta_j<=REF_NUM; delta_j++)
               for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
-                alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
-                beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
-                gamma = (k+(double)delta_k/(1+REF_NUM))*pi/N;
+/*
+          for (delta_i=0; !accept && delta_i<=1+REF_NUM; delta_i++)
+            for (delta_j=0; !accept && delta_j<=1+REF_NUM; delta_j++)
+              for (delta_k=0; delta_k<=1+REF_NUM; delta_k++) {
+*/
+                alpha = (i+(double)delta_i/(double)(1+REF_NUM))*PI/N;
+                beta  = (j+(double)delta_j/(double)(1+REF_NUM))*PI/N;
+                gamma = (k+(double)delta_k/(double)(1+REF_NUM))*PI/N;
+/*
+                if (alpha < TOL1) alpha = TOL1;
+                if (alpha > PI-TOL1) alpha = PI-TOL1;
+                if (beta  < TOL1) beta  = TOL1;
+                if (beta  > PI-TOL1) beta  = PI-TOL1;
+                if (gamma < TOL1) gamma = TOL1;
+                if (gamma > PI-TOL1) gamma = PI-TOL1;
+*/
                 if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
                   { accept = true; break; }
               }
-          if (accept) states[i][j][k] += 2;
+          if (accept) { states[i][j][k] += 2; }
 #else
-          alpha = (i+0.5)*pi/N;
-          beta  = (j+0.5)*pi/N;
-          gamma = (k+0.5)*pi/N;
+          alpha = (i+0.5)*PI/N;
+          beta  = (j+0.5)*PI/N;
+          gamma = (k+0.5)*PI/N;
           if ( test_bounds(A, B, C, cosA, cosB, cosC, x1, x2, x3, y1, y2, y3, alpha, beta, gamma) )
             states[i][j][k] += 2;
 #endif
