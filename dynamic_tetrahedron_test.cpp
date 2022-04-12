@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 4/9/2022)
+// dynamic_tetrahedon_test.cpp (by M. Q. Rieck, updated: 4/12/2022)
 
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
@@ -19,12 +19,12 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED). 
 
-#define M 500                   // how many (alpha, beta, gamma) points (M^3)?
-#define N 40                    // how fine to subdivide the interval [0, pi]
+#define M 600                   // how many (alpha, beta, gamma) points (M^3)?
+#define N 40                    // how fine to subdivide the interval [0, PI]
 //#define M 2400                // how many (alpha, beta, gamma) points (M^3)?
-//#define N 100                 // how fine to subdivide the interval [0, pi]
+//#define N 100                 // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
-#define pi M_PI                 // pi = 3.141592654..., of course
+#define PI M_PI                 // PI = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
 #define TOL2 0                  // tolerance for some other inequalities
 #define RESTRICT_DATA           // reject potentially troublesome data points
@@ -35,11 +35,11 @@
 #define ACUTE_TESTING           // only appropriate for an acute base triangle ABC
 #define MAX_RULES               // some testing based on toroid analysis
 #define EASY_COSINE_RULES       // more testing based of toroid analysis
-#define GRUNERT_DISCR_RULE_1    // a test based on Grunert's system discriminant
-//#define GRUNERT_DISCR_RULE_2  // a possibly more restictive version of that
+//#define GRUNERT_DISCR_RULE_1  // a test based on Grunert's system discriminant
+#define GRUNERT_DISCR_RULE_2    // a possibly more restictive version of that
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 5               // how much refinement?
+#define REF_NUM 10              // how much refinement?
 //#define SHOW_EXTRA            // display a couple significant regions
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
@@ -78,19 +78,19 @@ bool tilt_to_view_angles(double tau1, double tau2, double tau3, double cosA, dou
     beta  = acos((cos_delta2 + cos_delta3 * cos_delta1) / (sin_delta3 * sin_delta1));
     gamma = acos((cos_delta3 + cos_delta1 * cos_delta2) / (sin_delta1 * sin_delta2));
 #ifdef RESTRICT_DATA
-    if (alpha < 0 || alpha > pi || beta < 0 || beta > pi || gamma < 0 || gamma > pi ||
+    if (alpha < 0 || alpha > PI || beta < 0 || beta > PI || gamma < 0 || gamma > PI ||
       alpha > beta+gamma || beta > gamma+alpha || gamma > alpha+beta || alpha+beta+
-        gamma > 2*pi) { rejected++; return false; } 
+        gamma > 2*PI) { rejected++; return false; } 
 #endif
     return true;
 }
 
 inline double f(double x) {
-  return pi*(1-cos(x))/2;
+  return PI*(1-cos(x))/2;
 }
 
 inline int ind(double angle) {
-  int i = (int) (N*angle/pi);
+  int i = (int) (N*angle/PI);
   if (i < 0) i = 0;
   if (i >= N) i = N-1;
   return i;
@@ -112,10 +112,10 @@ int main(int argc, char **argv) {
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
     den = atoi(argv[1]) + atoi(argv[2]) + atoi(argv[3]);
-    A = atoi(argv[1])*pi / den;
-    B = atoi(argv[2])*pi / den;
-    C = atoi(argv[3])*pi / den;
-  } else A = B = C = pi/3;
+    A = atoi(argv[1])*PI / den;
+    B = atoi(argv[2])*PI / den;
+    C = atoi(argv[3])*PI / den;
+  } else A = B = C = PI/3;
   cosA = cos(A); cosB = cos(B); cosC = cos(C);
   i0 = ind(A); j0 = ind(B); k0 = ind(C);
   if (i0 < 0) i0 = 0; if (i0 >= N) i0 = N-1;
@@ -147,7 +147,7 @@ int main(int argc, char **argv) {
   x3 = x30 * cos_turn - y30 * sin_turn;
   y3 = x30 * sin_turn + y30 * cos_turn;
 #endif
-  printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/pi, B/pi, C/pi);
+  printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/PI, B/PI, C/PI);
   printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
   printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
@@ -168,10 +168,10 @@ int main(int argc, char **argv) {
     for (j=O; j<M-O; j++)
       for (k=O; k<M-O; k++)
 #ifdef EXTRA_LOW_PLANES
-        if (tilt_to_view_angles(f(i*pi/M), f(j*pi/M), f(k*pi/M), cosA, cosB, cosC, alpha,
+        if (tilt_to_view_angles(f(i*PI/M), f(j*PI/M), f(k*PI/M), cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
 #else
-        if (tilt_to_view_angles(i*pi/M, j*pi/M, k*pi/M, cosA, cosB, cosC, alpha,
+        if (tilt_to_view_angles(i*PI/M, j*PI/M, k*PI/M, cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
 #endif
   // Also use an array to record which cells in the array are within system of bounds
@@ -183,13 +183,13 @@ int main(int argc, char **argv) {
         for (delta_i=1; !accept && delta_i<=REF_NUM; delta_i++)
           for (delta_j=1; !accept && delta_j<=REF_NUM; delta_j++)
             for (delta_k=1; delta_k<=REF_NUM; delta_k++) {
-              alpha = (i+(double)delta_i/(1+REF_NUM))*pi/N;
-              beta  = (j+(double)delta_j/(1+REF_NUM))*pi/N;
-              gamma = (k+(double)delta_k/(1+REF_NUM))*pi/N;
+              alpha = (i+(double)delta_i/(1+REF_NUM))*PI/N;
+              beta  = (j+(double)delta_j/(1+REF_NUM))*PI/N;
+              gamma = (k+(double)delta_k/(1+REF_NUM))*PI/N;
 #else
-              alpha = (i+0.5)*pi/N;
-              beta  = (j+0.5)*pi/N;
-              gamma = (k+0.5)*pi/N;
+              alpha = (i+0.5)*PI/N;
+              beta  = (j+0.5)*PI/N;
+              gamma = (k+0.5)*PI/N;
 #endif
               cos_alpha = cos(alpha);
               cos_beta  = cos(beta);
@@ -223,7 +223,7 @@ int main(int argc, char **argv) {
 // Test the constraints in my papers concerning the angles A, B, C, alpha, beta and gamma
               if (
 #ifdef BASIC_RULES_1
-                alpha +  beta + gamma < 2*pi &&
+                alpha +  beta + gamma < 2*PI &&
                 alpha <  beta + gamma &&
                 beta  < gamma + alpha &&
                 gamma < alpha +  beta
@@ -232,9 +232,9 @@ int main(int argc, char **argv) {
 #endif
 #ifdef BASIC_RULES_2
                 &&
-                A + beta + gamma  < 2*pi &&
-                alpha + B + gamma < 2*pi &&
-                alpha + beta + C  < 2*pi
+                A + beta + gamma  < 2*PI &&
+                alpha + B + gamma < 2*PI &&
+                alpha + beta + C  < 2*PI
 #endif
 #ifdef BASIC_RULES_3
                 &&
@@ -273,7 +273,7 @@ int main(int argc, char **argv) {
                     (alpha <  A && beta >= B && gamma >= C)  ||
                     (alpha >= A && beta <  B && gamma >= C)  ||
                     (alpha >= A && beta >= B && gamma  < C)  ||
-                    (alpha >= A && beta >= B && gamma >= C && alpha < pi-A && beta < pi-B && gamma < pi-C)
+                    (alpha >= A && beta >= B && gamma >= C && alpha < PI-A && beta < PI-B && gamma < PI-C)
                 ) )
 #endif
 #endif
@@ -326,13 +326,13 @@ int main(int argc, char **argv) {
   mvprintw(STARTY+12, STARTX+2*N+3, "(imperfectly rendered):");
   mvprintw(STARTY+14, STARTX+2*N+3, "1. beta = B");
   mvprintw(STARTY+15, STARTX+2*N+3, "2. gamma = C");
-  mvprintw(STARTY+16, STARTX+2*N+3, "3. beta + gamma = 2 pi - alpha");
+  mvprintw(STARTY+16, STARTX+2*N+3, "3. beta + gamma = 2 PI - alpha");
   mvprintw(STARTY+17, STARTX+2*N+3, "4. beta + gamma = alpha");
   mvprintw(STARTY+18, STARTX+2*N+3, "5. beta - gamma = alpha");
   mvprintw(STARTY+19, STARTX+2*N+3, "6. gamma - beta = alpha");
-  mvprintw(STARTY+20, STARTX+2*N+3, "7. beta + gamma = 2 pi - A");
-  mvprintw(STARTY+21, STARTX+2*N+3, "8. beta = 2 pi - alpha - C");
-  mvprintw(STARTY+22, STARTX+2*N+3, "9. gamma = 2 pi - alpha - B");
+  mvprintw(STARTY+20, STARTX+2*N+3, "7. beta + gamma = 2 PI - A");
+  mvprintw(STARTY+21, STARTX+2*N+3, "8. beta = 2 PI - alpha - C");
+  mvprintw(STARTY+22, STARTX+2*N+3, "9. gamma = 2 PI - alpha - B");
   mvprintw(STARTY+23, STARTX+2*N+3, "a. beta = C + alpha");
   mvprintw(STARTY+24, STARTX+2*N+3, "b. gamma = B + alpha");
   mvprintw(STARTY+25, STARTX+2*N+3, "c. beta - gamma = A");
@@ -366,7 +366,7 @@ int main(int argc, char **argv) {
     if (ch == 'g') choice = 16;
     if (ch == 'h') choice = 17;
     if (ch == 27) all_done = true;
-    alpha = (i+.5)*pi/N;
+    alpha = (i+.5)*PI/N;
     attron(COLOR_PAIR(1));
     mvprintw(STARTY+ 4, STARTX+2*N+3, "alpha = %.4f", alpha);
     if (alpha == A) mvprintw(STARTY+ 4, STARTX+2*N+20, "= A");
@@ -421,11 +421,11 @@ int main(int argc, char **argv) {
     if (choice >= 3) {
       attron(COLOR_PAIR(5));
       for(j=0, x=STARTX; j < N; j++, x+=2) {
-        beta = (j+.5)*pi/N;
+        beta = (j+.5)*PI/N;
         for(k=0, y=STARTY; k < N; k++, y++) {
-          gamma = (k+.5)*pi/N;
+          gamma = (k+.5)*PI/N;
           switch(choice) {
-             case 3: if (fabs(alpha + beta + gamma - 2*pi) < TOL1) {
+             case 3: if (fabs(alpha + beta + gamma - 2*PI) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
              case  4: if (fabs(beta + gamma - alpha) < TOL1) {
@@ -437,13 +437,13 @@ int main(int argc, char **argv) {
              case  6: if (fabs(alpha + beta - gamma) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  7: if (fabs(A + beta + gamma - 2*pi) < TOL1) {
+             case  7: if (fabs(A + beta + gamma - 2*PI) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  8: if (fabs(alpha + B + gamma - 2*pi) < TOL1) {
+             case  8: if (fabs(alpha + B + gamma - 2*PI) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
-             case  9: if (fabs(alpha + beta + C - 2*pi) < TOL1) {
+             case  9: if (fabs(alpha + beta + C - 2*PI) < TOL1) {
                 mvprintw(y,x  ,"%c",'%'); mvprintw(y,x+1,"%c",'%'); }
                 break;
              case 10: if (fabs(alpha - beta + C) < TOL1) {
