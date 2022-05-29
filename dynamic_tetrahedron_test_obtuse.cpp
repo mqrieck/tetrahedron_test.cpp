@@ -1,8 +1,8 @@
 // dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 5/29/2022)
 
-// Note: This is test code for the obtuse base triangle case that gives far better bounds
-// that those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
-// work is needed, but I am definitely getting somewhere.
+// Note: This is test code for the obtuse base triangle case, which uses far better bounds
+// than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
+// work is needed however, but I am definitely getting close now.
 
 // Note: You need the ncurses library, and should then be able to compile at the command
 // line using something like this:
