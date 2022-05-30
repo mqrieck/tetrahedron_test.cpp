@@ -13,5 +13,6 @@ After compiling either program, one can either execute it without command-line p
 equilateral triangle, or else by specifying three positive integer parameters to indicate the proportions of the interior angles of
 the triangle ABC. Be sure that each of these numbers does not exceed the sum of the other two, to avoid using an obtuse triangle. 
 
-Some animated GIFs are also provided here. Four of these show examples of executing dynamic_tetrahedon.cpp. One shows a 3D
-image (from Mathematica) of a bounding region (gray) surrounding possible (alpha, beta, gamma) points (purple). 
+Some animated GIFs are also provided here. Four of these show examples of executing dynamic_tetrahedon.cpp. One (spike.gif) shows a 3D image (from Mathematica) of a bounding region (gray) surrounding possible (alpha, beta, gamma) points (purple). Two more (acute.gif and obtuse.gif) show the "Grunert discriminant surface" in "cosines space" (cosines of viewing angles), for quite different base triangle cases. 
+
+A new source code file, dynamic_test_tetrahedron_obtuse.cpp, has been added. It is tailored to better handle an obtuse base triangle, rather than an acute base triangle. The obtuse base triangle case is significantly more complicated that the acute base triangle case, and this is still a work in progress.
