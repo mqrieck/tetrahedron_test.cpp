@@ -1,4 +1,4 @@
-// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 5/29/2022)
+// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 5/30/2022)
 
 // Note: This is test code for the obtuse base triangle case, which uses far better bounds
 // than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
@@ -32,7 +32,7 @@
 #define TOL2 0                  // tolerance for some other inequalities
 #define RESTRICT_DATA           // reject potentially troublesome data points
 #define EXTRA_LOW_PLANES        // use more low elevat//ion tilt planes
-//#define REFINED                 // more refined testing for cell acceptance/rejection
+//#define REFINED               // more refined testing for cell acceptance/rejection
 #define REF_NUM 9               // how much refinement?
 #define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
@@ -104,20 +104,16 @@ inline void get_cosines(double phi1, double phi2, double phi3, double theta, dou
 }
 
 int main(int argc, char **argv) {
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y,
+  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, itemp,
     choice, delta_i, delta_j, delta_k, i12, i13, i22, i23, i32, i33, i42, i43, i52, i53, i62, i63, i72, i73, i82, i83,
-    i92, i93, i102, i103, itemp;
-  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den,
+    i92, i93, i102, i103;
+  double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, sqt, temp,
     x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
     H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3, phi1, phi2, phi3, theta0, theta1, theta2,
     Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, c11, c12, c13, c21, c22, c23, c31, c32, c33, c41, c42, c43, c51, c52, c53,
-    c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103, sqt, temp;
+    c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103;
   char ch, chars[N][N][N];
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8, got9, got10;
-#ifdef COMPLEX_GRUNERT_DISCR
-  complex<double> two = 2, four = 4, eighteen = 18, twenty_seven = 27, zeta1, zeta2, zeta3, zeta1conj, zeta2conj,
-    zeta3conj, zeta_prod, zeta_prod_sqr, zeta_prod_sqr_conj, xi, xi_conj, xi_norm, xi_cubed, xi_cubed_conj, D_complex;
-#endif
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -179,13 +175,14 @@ int main(int argc, char **argv) {
         if (tilt_to_view_angles(i*PI/M, j*PI/M, k*PI/M, cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
 #endif
-  // Also use an array to record which cells in the array are within system of bounds
+  // Also use an array to record which cells in the array are within system of bounds.
   for (i=0; i<N; i++) {
     alpha = (i+0.5)*PI/N;
     c1 = cos_alpha = cos(alpha);
     C1 = c1*c1;
     got1 = got2 = got3 = got4 = got5 = got6 = got7 = got8 = got9 = got10 = false;
-// Self-crossing points are needed for the D = 0 curve when B+C <= alpha < A
+// Need to know special points is a constant alpha plane.
+// Get the "easy" intersection points of the D = 0 curve and either the beta = B or gamma = C line.
     if (fabs(cosC*c1/cosA) <= 1) {
       c12 = cosB; c13 = -cosC*c1/cosA; i12 = ind(B); i13 = ind(acos(c13));
       states[i][i12][i13] = 10 + states[i][i12][i13] % 10;
@@ -196,6 +193,7 @@ int main(int argc, char **argv) {
       states[i][i22][i23] = 20 + states[i][i22][i23] % 10;
       got2 = true;
     }
+// Get the self-crossing points for the D = 0 curve are needed when B+C <= alpha < A.
     if (alpha >= B+C && alpha < A) {
       theta0 = acos((C1-cos(phi2-phi3))/(1-C1));
       theta1 = phi1 + theta0;
@@ -238,7 +236,7 @@ int main(int argc, char **argv) {
 //printf("4.  %d  %f  %f %f %f\n", states[i][i42][i43], c1, c41, c42, c43);
         }
       }
-// Other singular points on the D = 0 curve
+// Other singular points on the D = 0 curve.
       sqt = 4*C1*(1-cos(phi2-phi3))*(C1-cos(phi2-phi3)+(1-C1)*cos(phi2+phi3));
       if (sqt >= 0) {
         sqt = sqrt(sqt) / 2;
@@ -330,6 +328,7 @@ int main(int argc, char **argv) {
         states[i][i102][i103] += 10;
       }
     }
+    // Now determine which cells are "allowable" and which are not.
     for (j=0; j<N; j++)
       for (k=0; k<N; k++) {
 #ifdef REFINED
@@ -383,7 +382,7 @@ int main(int argc, char **argv) {
                   beta < B || gamma < C || (D < 0 &&
                     (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha)
                 ))
-// tricky border case
+// tricky border case (might not need)
 /*
                 && (
                   !(alpha < A) || got3 || got4 || got7 || got9 || (
@@ -423,6 +422,7 @@ int main(int argc, char **argv) {
 #else
               && states[i][j][k] >= 0) states[i][j][k] += 2;
 #endif
+// Set character for each cell appropriately.
 #ifdef SHOW_SPECIAL_PTS
         switch(states[i][j][k]) {
 #else
@@ -528,6 +528,7 @@ int main(int argc, char **argv) {
     if (alpha == A) mvprintw(STARTY+ 4, STARTX+2*N+20, "= A");
     if (alpha  < A) mvprintw(STARTY+ 4, STARTX+2*N+20, "< A");
     if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
+// Display a constant-alpha slice of "cosines space" [0,π]^3.
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
 #ifdef SHOW_SPECIAL_PTS
