@@ -31,12 +31,12 @@
 #define TOL1 0.05               // tolerance for some inequalities
 #define TOL2 0                  // tolerance for some other inequalities
 #define RESTRICT_DATA           // reject potentially troublesome data points
-#define EXTRA_LOW_PLANES        // use more low elevation tilt planes
-#define REFINED                 // more refined testing for cell acceptance/rejection
+#define EXTRA_LOW_PLANES        // use more low elevat//ion tilt planes
+//#define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 9               // how much refinement?
-//#define SHOW_EXTRA            // display a couple significant regions
-//#define SHOW_MORE_DISCR
-//#define SHOW_SPECIAL_PTS      // display special points
+#define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
+//#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
+#define SHOW_SPECIAL_PTS        // display special points
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -383,17 +383,18 @@ int main(int argc, char **argv) {
                   beta < B || gamma < C || (D < 0 &&
                     (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha)
                 ))
-// trick border case
+// tricky border case
+/*
                 && (
                   !(alpha < A) || got3 || got4 || got7 || got9 || (
                     (cosC * cos_beta  + cosB * cos_gamma > 0) &&
                     beta < B || gamma < C || (D < 0 &&
                       (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha)
                 ))
-
+*/
 // midrange alpha constraints
                 && (
-                  !(alpha > B+C && alpha < A) || (
+                  !(alpha >= B+C && alpha <= A) || (
                   (cosC * cos_beta  + cosB * cos_gamma > 0) &&
                   (beta  >= B || gamma < C || gamma < A + beta ) &&
                   (beta  >= B || alpha < A || alpha < C + beta ) &&
@@ -407,7 +408,9 @@ int main(int argc, char **argv) {
                   (!got9 || c2 >= c92 || c3 >= c93) &&
                   (!got3 || !got4 || c2 > c32 || c2 < c42 || c3 < c33 || c3 > c43 || D >= 0) &&
                   (!got7 || !got3 || c2 > c72 || c2 < c32 || c3 < c73 || c3 > c33 || D <= 0) &&
-                  (!got4 || !got9 || c2 > c42 || c2 < c92 || c3 < c43 || c3 > c93 || D <= 0)
+                  (!got4 || !got9 || c2 > c42 || c2 < c92 || c3 < c43 || c3 > c93 || D <= 0) &&
+                  (got3 || got4 || got7 || got8 || got9 || got10 || c2 > c12 || c3 > c23
+                    || ((c2 < c12 && c3 > c13 && c2 > c22 && c3 < c23) && D >= 0))
                 ))
 // large alpha constraints
                 && (
@@ -420,7 +423,11 @@ int main(int argc, char **argv) {
 #else
               && states[i][j][k] >= 0) states[i][j][k] += 2;
 #endif
+#ifdef SHOW_SPECIAL_PTS
         switch(states[i][j][k]) {
+#else
+        switch(states[i][j][k] % 10) {
+#endif
           case   0:  chars[i][j][k] = '.'; break;
           case   1:  chars[i][j][k] = 'x'; break;
           case   2:  chars[i][j][k] = ' '; break;
@@ -523,9 +530,12 @@ int main(int argc, char **argv) {
     if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
+#ifdef SHOW_SPECIAL_PTS
         if (states[i][j][k] > 9) attron(COLOR_PAIR(15));
-        else if (chars[i][j][k] == '.') {
-#ifdef SHOW_EXTRA
+        else
+#endif
+        if (chars[i][j][k] == '.') {
+#ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else
           attron(COLOR_PAIR(13));
@@ -533,7 +543,7 @@ int main(int argc, char **argv) {
           attron(COLOR_PAIR(3));
 #endif
         } else if (chars[i][j][k] == 'x') {
-#ifdef SHOW_EXTRA
+#ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else
           attron(COLOR_PAIR(14));
@@ -541,7 +551,7 @@ int main(int argc, char **argv) {
           attron(COLOR_PAIR(4));
 #endif
         } else {
-#ifdef SHOW_EXTRA
+#ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else
           attron(COLOR_PAIR(12));
@@ -552,18 +562,6 @@ int main(int argc, char **argv) {
         mvprintw(y,x  ,"%c",chars[i][j][k]);
         mvprintw(y,x+1,"%c",chars[i][j][k]);
       }
-
-#ifdef SHOW_SPECIAL_PTS
-    attron(COLOR_PAIR(5));
-    x = STARTX + 2*ind(B);
-    y = STARTY + ind(acos(-cos(alpha)*cosC/cosA));
-    mvprintw(y,x  ,"%c",'>');
-    mvprintw(y,x+1,"%c",'<');
-    x = STARTX + 2*ind(acos(-cos(alpha)*cosB/cosA));
-    y = STARTY + ind(C);
-    mvprintw(y,x  ,"%c",'>');
-    mvprintw(y,x+1,"%c",'<');
-#endif
     if (choice == 1) {
       attron(COLOR_PAIR(5));
       x = STARTX + 2*j0;
