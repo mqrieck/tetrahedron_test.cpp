@@ -3,6 +3,8 @@ Test code for a couple papers concerned with the constraints on the angles of a 
 
 Question: Given a fixed triangle in space, when you view its vertices from another point in space, what constraints exist among the angles between the the rays from the viewing point to the vertices?
 
+This simple question has a surprisingly complicated answer. The details for the case when the base triangle is acute have been completely worked out. For an obtuse base triangle, the story is more complicated.
+
 The programs tetrahedon_test.cpp and dynamic_test_tetrahedron.cpp test my claims made in (yet-to-be-published) research papers dealing with the construction of a tetrahedron based on a given (acute) triangle ABC (as a face). The possible interior angles (alpha, beta, gamma) at the new vertex P are restricted in various ways, by a system of (conditional) inequalities. See the "notes" at the top of each source code file, as well as the displayed instructions, for further information.
 
 After compiling either program, one can either execute it without command-line parameters, to indicate that ABC should be an equilateral triangle, or else by specifying three positive integer parameters to indicate the proportions of the interior angles of the triangle ABC. Be sure that each of these numbers does not exceed the sum of the other two, to avoid using an obtuse triangle. 
