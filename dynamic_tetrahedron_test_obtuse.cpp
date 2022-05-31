@@ -2,7 +2,8 @@
 
 // Note: This is test code for the obtuse base triangle case, which uses far better bounds
 // than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
-// work is needed however, but I am definitely getting close now.
+// work is needed however, but I am definitely getting close now. In the case of an
+// obtuse isosceles triangle, the results are quite good, but not perfect.
 
 // Note: You need the ncurses library, and should then be able to compile at the command
 // line using something like this:
