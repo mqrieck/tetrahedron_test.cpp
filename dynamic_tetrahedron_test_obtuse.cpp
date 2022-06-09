@@ -24,7 +24,7 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED).
 
-#define M 300                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define PI M_PI                 // PI = 3.141592654..., of course
