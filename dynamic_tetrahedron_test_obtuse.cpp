@@ -1,4 +1,5 @@
-// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 5/30/2022)
+
+// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 6/9/2022)
 
 // Note: This is test code for the obtuse base triangle case, which uses far better bounds
 // than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
@@ -23,7 +24,7 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED).
 
-#define M 3000                  // how many (alpha, beta, gamma) points (M^3)?
+#define M 300                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define PI M_PI                 // PI = 3.141592654..., of course
@@ -32,7 +33,7 @@
 #define RESTRICT_DATA           // reject potentially troublesome data points
 #define EXTRA_LOW_PLANES        // use more low elevat//ion tilt planes
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 9               // how much refinement?
+#define REF_NUM 5               // how much refinement?
 #define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
 #define SHOW_SPECIAL_PTS        // display special points
@@ -103,7 +104,7 @@ inline void get_cosines(double phi1, double phi2, double phi3, double theta, dou
 }
 
 int main(int argc, char **argv) {
-  int states[N][N][N], state, total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, itemp,
+  int total, count0, count1, count2, count3, rejected = 0, i0, j0, k0, i, j, k, x, y, itemp,
     choice, delta_i, delta_j, delta_k, i12, i13, i22, i23, i32, i33, i42, i43, i52, i53, i62, i63, i72, i73, i82, i83,
     i92, i93, i102, i103;
   double A, B, C, cosA, cosB, cosC, alpha, beta, gamma, cos_alpha, cos_beta, cos_gamma, den, sqt, temp,
@@ -111,7 +112,7 @@ int main(int argc, char **argv) {
     H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3, phi1, phi2, phi3, theta0, theta1, theta2,
     Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, c11, c12, c13, c21, c22, c23, c31, c32, c33, c41, c42, c43, c51, c52, c53,
     c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103;
-  char ch, chars[N][N][N];
+  char ch, states[N][N][N];
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8, got9, got10;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
@@ -170,9 +171,11 @@ int main(int argc, char **argv) {
 #ifdef EXTRA_LOW_PLANES
         if (tilt_to_view_angles(f(i*PI/M), f(j*PI/M), f(k*PI/M), cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
+            else states[ind(alpha)][ind(beta)][ind(gamma)] = 0;
 #else
         if (tilt_to_view_angles(i*PI/M, j*PI/M, k*PI/M, cosA, cosB, cosC, alpha,
           beta, gamma, rejected)) states[ind(alpha)][ind(beta)][ind(gamma)] = 1;
+            else states[ind(alpha)][ind(beta)][ind(gamma)] = 0;
 #endif
   // Also use an array to record which cells in the array are within system of bounds.
   for (i=0; i<N; i++) {
@@ -427,21 +430,21 @@ int main(int argc, char **argv) {
 #else
         switch(states[i][j][k] % 10) {
 #endif
-          case   0:  chars[i][j][k] = '.'; break;
-          case   1:  chars[i][j][k] = 'x'; break;
-          case   2:  chars[i][j][k] = ' '; break;
-          case   3:  chars[i][j][k] = 'o'; break;
-          case  10: case  11: case  12: case  13:  chars[i][j][k] = '1'; break;
-          case  20: case  21: case  22: case  23:  chars[i][j][k] = '2'; break;
-          case  30: case  31: case  32: case  33:  chars[i][j][k] = '3'; break;
-          case  40: case  41: case  42: case  43:  chars[i][j][k] = '4'; break;
-          case  50: case  51: case  52: case  53:  chars[i][j][k] = '5'; break;
-          case  60: case  61: case  62: case  63:  chars[i][j][k] = '6'; break;
-          case  70: case  71: case  72: case  73:  chars[i][j][k] = '7'; break;
-          case  80: case  81: case  82: case  83:  chars[i][j][k] = '8'; break;
-          case  90: case  91: case  92: case  93:  chars[i][j][k] = '9'; break;
-          case 100: case 101: case 102: case 103:  chars[i][j][k] = '0'; break;
-          default:  chars[i][j][k] = '?';
+          case   0:  states[i][j][k] = '.'; break;
+          case   1:  states[i][j][k] = 'x'; break;
+          case   2:  states[i][j][k] = ' '; break;
+          case   3:  states[i][j][k] = 'o'; break;
+          case  10: case  11: case  12: case  13:  states[i][j][k] = '1'; break;
+          case  20: case  21: case  22: case  23:  states[i][j][k] = '2'; break;
+          case  30: case  31: case  32: case  33:  states[i][j][k] = '3'; break;
+          case  40: case  41: case  42: case  43:  states[i][j][k] = '4'; break;
+          case  50: case  51: case  52: case  53:  states[i][j][k] = '5'; break;
+          case  60: case  61: case  62: case  63:  states[i][j][k] = '6'; break;
+          case  70: case  71: case  72: case  73:  states[i][j][k] = '7'; break;
+          case  80: case  81: case  82: case  83:  states[i][j][k] = '8'; break;
+          case  90: case  91: case  92: case  93:  states[i][j][k] = '9'; break;
+          case 100: case 101: case 102: case 103:  states[i][j][k] = '0'; break;
+          default:  states[i][j][k] = '?';
         }
     }
   }
@@ -531,10 +534,10 @@ int main(int argc, char **argv) {
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
 #ifdef SHOW_SPECIAL_PTS
-        if (states[i][j][k] > 9) attron(COLOR_PAIR(15));
+        if (states[i][j][k] >= '0' && states[i][j][k] <= '9') attron(COLOR_PAIR(15));
         else
 #endif
-        if (chars[i][j][k] == '.') {
+        if (states[i][j][k] == '.') {
 #ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else
@@ -542,7 +545,7 @@ int main(int argc, char **argv) {
 #else
           attron(COLOR_PAIR(3));
 #endif
-        } else if (chars[i][j][k] == 'x') {
+        } else if (states[i][j][k] == 'x') {
 #ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else
@@ -559,8 +562,8 @@ int main(int argc, char **argv) {
           attron(COLOR_PAIR(2));
 #endif
         }
-        mvprintw(y,x  ,"%c",chars[i][j][k]);
-        mvprintw(y,x+1,"%c",chars[i][j][k]);
+        mvprintw(y,x  ,"%c",states[i][j][k]);
+        mvprintw(y,x+1,"%c",states[i][j][k]);
       }
     if (choice == 1) {
       attron(COLOR_PAIR(5));
