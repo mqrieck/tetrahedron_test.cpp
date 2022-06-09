@@ -4,7 +4,7 @@
 // Note: This is test code for the results in my "tetrahedron and toroids" paper, and beyond.
 
 // Note: You need the ncurses library, and should then be able to compile at the command
-// line using something like this:
+// line and run the program using something like this:
 //
 //     g++ -c dynamic_tetrahedron_test.cpp
 //     g++ dynamic_tetrahedron_test.o -lncurses -o test
@@ -162,7 +162,7 @@ int main(int argc, char **argv) {
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
-  printf("PLEASE WAIT (patience is a virtue) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
+  printf("PLEASE WAIT (patience is a virtue, or use fewer points) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
   // Use a 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
