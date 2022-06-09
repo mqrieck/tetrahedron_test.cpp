@@ -3,14 +3,14 @@
 // Note: This is test code for the obtuse base triangle case, which uses far better bounds
 // than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
 // work is needed however, but I am definitely getting close now. In the case of an
-// obtuse isosceles triangle, the results are quite good, but not perfect.
+// obtuse isoceles triangle, the results are quite good, but not perfect.
 
 // Note: You need the ncurses library, and should then be able to compile at the command
-// line using something like this:
+// line and run the program using something like this:
 //
 //     g++ -c dynamic_tetrahedron_test_obtuse.cpp
 //     g++ dynamic_tetrahedron_test_obtuse.o -lncurses -o test
-//     ./test
+//     ./test 7 3 2
 //
 // (You will need a sufficiently large virtual terminal screen and a small enough font.)
 
@@ -23,9 +23,7 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED).
 
-//#define M 3000                // how many (alpha, beta, gamma) points (M^3)?
-//#define N 100                 // how fine to subdivide the interval [0, PI]
-#define M 500                   // how many (alpha, beta, gamma) points (M^3)?
+#define M 3000                  // how many (alpha, beta, gamma) points (M^3)?
 #define N 100                   // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define PI M_PI                 // PI = 3.141592654..., of course
@@ -33,7 +31,7 @@
 #define TOL2 0                  // tolerance for some other inequalities
 #define RESTRICT_DATA           // reject potentially troublesome data points
 #define EXTRA_LOW_PLANES        // use more low elevat//ion tilt planes
-//#define REFINED               // more refined testing for cell acceptance/rejection
+#define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 9               // how much refinement?
 #define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
@@ -164,7 +162,7 @@ int main(int argc, char **argv) {
   printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary).\n\n");
-  printf("PLEASE WAIT (patience is a virtue) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
+  printf("PLEASE WAIT (patience is a virtue, or use fewer points) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
   // Use a 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
@@ -380,8 +378,8 @@ int main(int argc, char **argv) {
 		&& (
                   !(alpha <= B+C) || (
                   (cosC * cos_beta  + cosB * cos_gamma > 0) &&
-                  beta < B || gamma < C || (D < 0 &&
-                    (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha)
+                  beta <= B || gamma <= C || ( D <= 0 &&
+                    (alpha + B - C) * beta + (alpha - B + C) * gamma <= (alpha + B + C) * alpha)
                 ))
 // tricky border case (might not need)
 /*
@@ -394,7 +392,7 @@ int main(int argc, char **argv) {
 */
 // midrange alpha constraints
                 && (
-                  !(alpha >= B+C && alpha <= A) || (
+                  !(alpha > B+C && alpha < A) || (
                   (cosC * cos_beta  + cosB * cos_gamma > 0) &&
                   (beta  >= B || gamma < C || gamma < A + beta ) &&
                   (beta  >= B || alpha < A || alpha < C + beta ) &&
