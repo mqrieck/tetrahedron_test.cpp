@@ -237,7 +237,7 @@ int main(int argc, char **argv) {
   printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
   printf("portion of the cube (when it contains part of the boundary). When enabled, pound signs show where α = A, β = B or γ = C.\n\n");
 #endif
-  printf("PLEASE WAIT (patience is a virtue) while data is being generated .... \n\n\n\n\n");
+  printf("PLEASE WAIT (patience is a virtue, or use fewer points) while data is being generated .... \n\n\n\n\n");
   // Use 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (int i=O; i<M-O; i++)
     for (int j=O; j<M-O; j++)
