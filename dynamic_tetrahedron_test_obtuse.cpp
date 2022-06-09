@@ -31,7 +31,7 @@
 #define TOL1 0.05               // tolerance for some inequalities
 #define TOL2 0                  // tolerance for some other inequalities
 #define RESTRICT_DATA           // reject potentially troublesome data points
-#define EXTRA_LOW_PLANES        // use more low elevat//ion tilt planes
+#define EXTRA_LOW_PLANES        // use more low elevation tilt planes
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 5               // how much refinement?
 #define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
