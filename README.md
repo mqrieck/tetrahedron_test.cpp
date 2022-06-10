@@ -4,7 +4,7 @@ Test code for results in a couple papers concerned with the constraints on the a
 
 Question: Given a fixed triangle in space, when you view its vertices from another point in space, what constraints exist among the angles between the the rays from the viewing point to the vertices?
 
-This simple question has a surprisingly complicated answer. The details for the case when the base triangle is acute have been completely worked out. Acute_triangle_case.pdf is a facr sheet for this case. For an obtuse base triangle, the story is more complicated, but much progress has been made here too.
+This simple question has a surprisingly complicated answer. The details for the case when the base triangle is acute have been completely worked out. Acute_Triangle_Case.pdf is a fact sheet for this case. For an obtuse base triangle, the story is more complicated, but much progress has been made here too.
 
 The programs tetrahedon_test.cpp and dynamic_test_tetrahedron.cpp test my claims made in (yet-to-be-published) research papers dealing with the construction of a tetrahedron based on a given (acute) triangle ABC as a face. The possible interior angles (alpha, beta, gamma) at the new vertex P are restricted in various ways, by a system of (conditional) inequalities. See the "notes" at the top of each source code file, as well as the displayed instructions, for further information.
 
