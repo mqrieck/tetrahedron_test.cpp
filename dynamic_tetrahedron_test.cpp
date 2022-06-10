@@ -40,7 +40,7 @@
 //#define COMPLEX_GRUNERT_DISCR // use complex numbers to compute this discriminant
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 10              // how much refinement?
-//#define SHOW_EXTRA            // display a couple significant regions
+//#define SHOW_REGIONS          // display a couple significant regions (H > 0, D < 0)
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -375,7 +375,7 @@ int main(int argc, char **argv) {
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
         if (chars[i][j][k] == '.') {
-#ifdef SHOW_EXTRA
+#ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(7)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(10)); else
           attron(COLOR_PAIR(13));
@@ -383,7 +383,7 @@ int main(int argc, char **argv) {
           attron(COLOR_PAIR(3));
 #endif
         } else if (chars[i][j][k] == 'x') {
-#ifdef SHOW_EXTRA
+#ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(8)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(11)); else
           attron(COLOR_PAIR(14));
@@ -391,7 +391,7 @@ int main(int argc, char **argv) {
           attron(COLOR_PAIR(4));
 #endif
         } else {
-#ifdef SHOW_EXTRA
+#ifdef SHOW_REGIONS
           if (flags1[i][j][k]) attron(COLOR_PAIR(6)); else
           if (flags2[i][j][k]) attron(COLOR_PAIR(9)); else
           attron(COLOR_PAIR(12));
