@@ -24,8 +24,8 @@
 
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED).
 
-#define M 2000                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 100                   // how fine to subdivide the interval [0, PI]
+#define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
+#define N 140                   // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define PI M_PI                 // PI = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
@@ -33,10 +33,10 @@
 #define RESTRICT_DATA           // reject potentially troublesome data points
 #define EXTRA_LOW_PLANES        // use more low elevation tilt planes
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 5               // how much refinement?
-#define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
+#define REF_NUM 15              // how much refinement?
+//#define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
-#define SHOW_SPECIAL_PTS        // display special points
+//#define SHOW_SPECIAL_PTS        // display special points
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -149,8 +149,8 @@ int main(int argc, char **argv) {
   y3 = x30 * sin_turn + y30 * cos_turn;
   phi1 = atan2(y1,x1); phi2 = atan2(y2,x2); phi3 = atan2(y3,x3);
   printf("\n\nThe base triangle angles: A = %.4fπ , B = %.4fπ , C = %.4fπ.\n\n", A/PI, B/PI, C/PI);
-  printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system\n");
-  printf("of inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
+  printf("The following plots show slices of the cube [0,π] x [0,π] x [0,π] whose coordinates are α, β and γ. A system of\n");
+  printf("inequalities defines an \"allowable\" portion of this cube. The slices are divided into cells. Each cell is\n");
   printf("designated to be \"allowable\" or \"unallowable,\" based on the system of inequalities. However, a cell that has\n");
   printf("been designated to be \"unallowable\" might actually contain some of the allowable portion of the cube together\n");
   printf("with some of the unallowable portion of the cube, in which case calling the cell \"unallowable\" is an unfortunate\n");
@@ -159,11 +159,11 @@ int main(int argc, char **argv) {
   printf("a point P = (x, y, z) that extends the triangle ABC to form a tetrahedron ABCP. If a cell contains such a point\n");
   printf("(α, β, γ), then we call it \"occupied;\" otherwise the cell is \"unoccupied.\" (A basic understanding of the problem\n");
   printf("in the research paper that this program supports is presumed here.)\n\n");
-  printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\'\n");
-  printf("represents an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents\n");
-  printf("an occupied unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable\n");
-  printf("portion of the cube (when it contains part of the boundary).\n\n");
-  printf("PLEASE WAIT (patience is a virtue, or use fewer points) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
+  printf("Each cell is represented by a character. A space character represents an unoccupied allowable cell, an \'o\' represents\n");
+  printf("an occupied allowable cell, a dot represents an unoccupied unallowable cell, and an \'x\' represents an occupied\n");
+  printf("unallowable cell. This latter case is possible since an \"unallowable\" cell might contain an allowable portion of\n");
+  printf("the cube (when it contains part of the boundary). Ideally, there should only be cells with dots and cells with o's.\n\n");
+  printf("PLEASE WAIT (or use fewer points) while data is being generated (press the enter/return key if stuck) ....\n\n\n\n\n");
   // Use a 3D array to record possible (alpha, beta, gamma) triples for given triangle
   for (i=O; i<M-O; i++)
     for (j=O; j<M-O; j++)
