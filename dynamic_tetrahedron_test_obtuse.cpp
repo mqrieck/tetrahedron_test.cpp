@@ -34,9 +34,9 @@
 #define EXTRA_LOW_PLANES        // use more low elevation tilt planes
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 15              // how much refinement?
-//#define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
+#define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
-//#define SHOW_SPECIAL_PTS        // display special points
+#define SHOW_SPECIAL_PTS        // display special points
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -527,9 +527,12 @@ int main(int argc, char **argv) {
     alpha = (i+.5)*PI/N;
     attron(COLOR_PAIR(1));
     mvprintw(STARTY+ 4, STARTX+2*N+3, "alpha = %.4f", alpha);
-    if (alpha == A) mvprintw(STARTY+ 4, STARTX+2*N+20, "= A");
-    if (alpha  < A) mvprintw(STARTY+ 4, STARTX+2*N+20, "< A");
-    if (alpha  > A) mvprintw(STARTY+ 4, STARTX+2*N+20, "> A");
+    if (alpha == A)   mvprintw(STARTY+4, STARTX+2*N+20, "= A");
+    if (alpha  < A)   mvprintw(STARTY+4, STARTX+2*N+20, "< A");
+    if (alpha  > A)   mvprintw(STARTY+4, STARTX+2*N+20, "> A");
+    if (alpha == B+C) mvprintw(STARTY+4, STARTX+2*N+24, ", = B+C");
+    if (alpha  < B+C) mvprintw(STARTY+4, STARTX+2*N+24, ", < B+C");
+    if (alpha  > B+C) mvprintw(STARTY+4, STARTX+2*N+24, ", > B+C");
 // Display a constant-alpha slice of "cosines space" [0,π]^3.
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
