@@ -115,9 +115,9 @@ int main(int argc, char **argv) {
     c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103;
   char ch, states[N][N][N]
 #ifdef DEBUG
-, debug[N][150]
+    , debug[N][150]
 #endif
-;
+    ;
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8, got9, got10;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
