@@ -34,9 +34,9 @@
 #define EXTRA_LOW_PLANES        // use more low elevation tilt planes
 #define REFINED                 // more refined testing for cell acceptance/rejection
 #define REF_NUM 15              // how much refinement?
-#define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
+//#define SHOW_REGIONS          // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
-#define SHOW_SPECIAL_PTS        // display special points
+//#define SHOW_SPECIAL_PTS      // display special points
 //#define DEBUG                 // display special points information
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
