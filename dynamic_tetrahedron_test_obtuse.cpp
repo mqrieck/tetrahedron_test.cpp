@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 6/9/2022)
+// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 6/13/2022)
 
 // Note: This is test code for the obtuse base triangle case, which uses far better bounds
 // than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
@@ -37,6 +37,7 @@
 #define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
 #define SHOW_SPECIAL_PTS        // display special points
+//#define DEBUG
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -112,7 +113,11 @@ int main(int argc, char **argv) {
     H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3, phi1, phi2, phi3, theta0, theta1, theta2,
     Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, c11, c12, c13, c21, c22, c23, c31, c32, c33, c41, c42, c43, c51, c52, c53,
     c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103;
-  char ch, states[N][N][N];
+  char ch, states[N][N][N]
+#ifdef DEBUG
+, debug[N][150]
+#endif
+;
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8, got9, got10;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
@@ -183,6 +188,8 @@ int main(int argc, char **argv) {
     c1 = cos_alpha = cos(alpha);
     C1 = c1*c1;
     got1 = got2 = got3 = got4 = got5 = got6 = got7 = got8 = got9 = got10 = false;
+    c12 = c13 = c22 = c23 = c32 = c33 = c42 = c43 = c52 = c53 = c62 = c63 = c72 = c73 =
+      c82 = c83 = c92 = c93 = c102 = c103 = 2;
 // Need to know special points is a constant alpha plane.
 // Get the "easy" intersection points of the D = 0 curve and either the beta = B or gamma = C line.
     if (fabs(cosC*c1/cosA) <= 1) {
@@ -330,6 +337,12 @@ int main(int argc, char **argv) {
         states[i][i102][i103] += 10;
       }
     }
+#ifdef DEBUG
+    sprintf(debug[i],
+      "%d%d%d%d%d%d%d%d%d%d < %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f >     \n",
+      got1, got2, got3, got4, got5, got6, got7, got8, got9, got10,
+      c12, c13, c22, c23, c32, c33, c42, c43, c52, c53, c62, c63, c72, c73, c82, c83, c92, c93, c102, c103);
+#endif
     // Now determine which cells are "allowable" and which are not.
     for (j=0; j<N; j++)
       for (k=0; k<N; k++) {
@@ -380,39 +393,32 @@ int main(int argc, char **argv) {
 // small alpha constraints
 		&& (
                   !(alpha <= B+C) || (
-                  (cosC * cos_beta  + cosB * cos_gamma > 0) &&
-                  beta <= B || gamma <= C || ( D <= 0 &&
-                    (alpha + B - C) * beta + (alpha - B + C) * gamma <= (alpha + B + C) * alpha)
-                ))
-// tricky border case (might not need)
-/*
-                && (
-                  !(alpha < A) || got3 || got4 || got7 || got9 || (
-                    (cosC * cos_beta  + cosB * cos_gamma > 0) &&
-                    beta < B || gamma < C || (D < 0 &&
-                      (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha)
-                ))
-*/
+                    cosC * cos_beta + cosB * cos_gamma > 0 &&
+                    (beta <= B || gamma <= C || D < 0 )))
 // midrange alpha constraints
                 && (
                   !(alpha > B+C && alpha < A) || (
-                  (cosC * cos_beta  + cosB * cos_gamma > 0) &&
-                  (beta  >= B || gamma < C || gamma < A + beta ) &&
-                  (beta  >= B || alpha < A || alpha < C + beta ) &&
-                  (gamma >= C || alpha < A || alpha < B + gamma) &&
-                  (gamma >= C || beta  < B || beta  < A + gamma) &&
-                  (alpha < B + C || alpha > A || (beta < C + alpha && gamma < B + alpha)) &&
-                  (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha &&
-                  (!got3 || c2 >= c32 || c3 >= c33) &&
-                  (!got4 || c2 >= c42 || c3 >= c43) &&
-                  (!got7 || c2 >= c72 || c3 >= c73) &&
-                  (!got9 || c2 >= c92 || c3 >= c93) &&
-                  (!got3 || !got4 || c2 > c32 || c2 < c42 || c3 < c33 || c3 > c43 || D >= 0) &&
-                  (!got7 || !got3 || c2 > c72 || c2 < c32 || c3 < c73 || c3 > c33 || D <= 0) &&
-                  (!got4 || !got9 || c2 > c42 || c2 < c92 || c3 < c43 || c3 > c93 || D <= 0) &&
-                  (got3 || got4 || got7 || got8 || got9 || got10 || c2 > c12 || c3 > c23
-                    || ((c2 < c12 && c3 > c13 && c2 > c22 && c3 < c23) && D >= 0))
-                ))
+                    (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha &&
+                    (beta <= B || gamma <= C || (
+                      /* cannot be below and to right of 3rd special point */
+                      (!got3 || c2 > c32 || c3 > c33) &&
+                      /* cannot be below and to right of 4th special point */
+                      (!got4 || c2 > c42 || c3 > c43) &&
+                      /* cannot be below and to right of 7th special point */
+                      (!got7 || c2 > c72 || c3 > c73) &&
+                      /* cannot be below and to right of 9th special point */
+                      (!got9 || c2 > c92 || c3 > c93) &&
+                      /* middle box restriction */
+                      (!got3 || !got4 || c2 > c32 || c2 < c42 || c3 < c33 || c3 > c43 || D > 0) &&
+                      /* lower box restriction */
+                      (!got7 || !got3 || c2 > c72 || c2 < c32 || c3 < c73 || c3 > c33 || D < 0) &&
+                      /* upper box restriction */
+                      (!got4 || !got9 || c2 > c42 || c2 < c92 || c3 < c43 || c3 > c93 || D < 0) &&
+                      /* */
+                      ((got7 && got9 && got3 && got4) || !got1 || !got2 || (
+                         (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
+                         (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
+                ))))
 // large alpha constraints
                 && (
                   !(alpha >= A) || (beta >= B && gamma >= C)
@@ -640,6 +646,11 @@ int main(int argc, char **argv) {
         }
       }
     }
+#ifdef DEBUG
+    attron(COLOR_PAIR(1));
+    mvprintw(STARTY+34, STARTX+2*N+3, "Debug:");
+    mvprintw(STARTY+35, STARTX+2*N+3, debug[i]);
+#endif
     refresh();
   } while (!all_done);
   attroff(COLOR_PAIR(1));
