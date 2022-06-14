@@ -113,11 +113,10 @@ int main(int argc, char **argv) {
     H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3, phi1, phi2, phi3, theta0, theta1, theta2,
     Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, c11, c12, c13, c21, c22, c23, c31, c32, c33, c41, c42, c43, c51, c52, c53,
     c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103;
-  char ch, states[N][N][N]
+  char ch, states[N][N][N];
 #ifdef DEBUG
-    , debug[N][150]
+  char debug[N][150];
 #endif
-    ;
   bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8, got9, got10;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
