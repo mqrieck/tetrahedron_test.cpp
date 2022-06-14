@@ -37,7 +37,7 @@
 #define SHOW_REGIONS            // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
 #define SHOW_SPECIAL_PTS        // display special points
-//#define DEBUG
+#define DEBUG                   // display special points information
 #define STARTX 2                // horizontal start of displayed character grid
 #define STARTY 2                // vertical start of displayed character grid
 
@@ -394,12 +394,12 @@ int main(int argc, char **argv) {
 		&& (
                   !(alpha <= B+C) || (
                     cosC * cos_beta + cosB * cos_gamma > 0 &&
-                    (beta <= B || gamma <= C || D < 0 )))
+                    (beta < B || gamma < C || D < 0 )))
 // midrange alpha constraints
                 && (
                   !(alpha > B+C && alpha < A) || (
                     (alpha + B - C) * beta + (alpha - B + C) * gamma < (alpha + B + C) * alpha &&
-                    (beta <= B || gamma <= C || (
+                    (beta < B || gamma < C || (
                       /* cannot be below and to right of 3rd special point */
                       (!got3 || c2 > c32 || c3 > c33) &&
                       /* cannot be below and to right of 4th special point */
@@ -414,14 +414,14 @@ int main(int argc, char **argv) {
                       (!got7 || !got3 || c2 > c72 || c2 < c32 || c3 < c73 || c3 > c33 || D < 0) &&
                       /* upper box restriction */
                       (!got4 || !got9 || c2 > c42 || c2 < c92 || c3 < c43 || c3 > c93 || D < 0) &&
-                      /* */
-                      ((got7 && got9 && got3 && got4) || !got1 || !got2 || (
+                      /* use 1st and 2nd special points when missing other special points */
+                      ((got3 && got4 && got7 && got8) || !got1 || !got2 || (
                          (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
                          (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
                 ))))
 // large alpha constraints
                 && (
-                  !(alpha >= A) || (beta >= B && gamma >= C)
+                  !(alpha >= A) || (beta > B && gamma > C)
                 )
 #ifdef REFINED
               ) { accept = true; break; }
