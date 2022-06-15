@@ -364,7 +364,7 @@ int main(int argc, char **argv) {
                 gamma + alpha -  beta < 2*(C+A) &&
                 alpha +  beta - gamma < 2*(A+B)
 // small alpha constraints
-		&& (
+                && (
                   !(alpha <= B+C) || (
                     cosC * cos_beta + cosB * cos_gamma > 0 &&
                     (beta < B || gamma < C || D < 0 )))
