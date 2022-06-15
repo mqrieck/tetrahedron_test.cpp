@@ -200,8 +200,8 @@ int main(int argc, char **argv) {
       states[i][i22][i23] = 20 + states[i][i22][i23] % 10;
       got2 = true;
     }
-// Get the self-crossing points for the D = 0 curve are needed when B+C <= alpha < A.
-    if (alpha >= B+C && alpha < A) {
+// Get the self-crossing points for the D = 0 curve are needed when B+C < alpha < A.
+    if (alpha > B+C && alpha < A) {
       theta0 = acos((C1-cos(phi2-phi3))/(1-C1));
       theta1 = phi1 + theta0;
       theta2 = phi1 - theta0;
