@@ -33,7 +33,7 @@
 #define RESTRICT_DATA           // reject potentially troublesome data points
 #define EXTRA_LOW_PLANES        // use more low elevation tilt planes
 #define REFINED                 // more refined testing for cell acceptance/rejection
-#define REF_NUM 15              // how much refinement?
+#define REF_NUM 25              // how much refinement?
 //#define SHOW_REGIONS          // display a couple significant regions (H > 0, D < 0)
 //#define SHOW_MORE_DISCR       // ignore H > 0 region, but show all of D < 0 region
 //#define SHOW_SPECIAL_PTS      // display special points
@@ -112,12 +112,12 @@ int main(int argc, char **argv) {
     x10, x20, x30, y10, y20, y30, x1, x2, x3, y1, y2, y3, cos_turn, sin_turn, c1, c2, c3, C0, C1, C2, C3,
     H, L, R, E, D, t0, t1, t2, t3, sr, t10, t20, t30, G1, G2, G3, phi1, phi2, phi3, theta0, theta1, theta2,
     Z1, Z2, Z3, Z4, Z5, Z6, Z7, Z8, Z9, Z10, c11, c12, c13, c21, c22, c23, c31, c32, c33, c41, c42, c43, c51, c52, c53,
-    c61, c62, c63, c71, c72, c73, c81, c82, c83, c91, c92, c93, c101, c102, c103;
+    c61, c62, c63, c71, c72, c73, c81, c82, c83;
   char ch, states[N][N][N];
 #ifdef DEBUG
   char debug[N][150];
 #endif
-  bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8, got9, got10;
+  bool accept, all_done, flags1[N][N][N], flags2[N][N][N], got1, got2, got3, got4, got5, got6, got7, got8;
   // Set the angles for the base triangle ABC
   // Can use three command line integer parameters to specify the proportion A : B : C
   if (argc == 4) {
@@ -186,9 +186,8 @@ int main(int argc, char **argv) {
     alpha = (i+0.5)*PI/N;
     c1 = cos_alpha = cos(alpha);
     C1 = c1*c1;
-    got1 = got2 = got3 = got4 = got5 = got6 = got7 = got8 = got9 = got10 = false;
-    c12 = c13 = c22 = c23 = c32 = c33 = c42 = c43 = c52 = c53 = c62 = c63 = c72 = c73 =
-      c82 = c83 = c92 = c93 = c102 = c103 = 2;
+    got1 = got2 = got3 = got4 = got5 = got6 = got7 = got8 = false;
+    c12 = c13 = c22 = c23 = c32 = c33 = c42 = c43 = c52 = c53 = c62 = c63 = c72 = c73 = c82 = c83 = 2;
 // Need to know special points is a constant alpha plane.
 // Get the "easy" intersection points of the D = 0 curve and either the beta = B or gamma = C line.
     if (fabs(cosC*c1/cosA) <= 1) {
@@ -245,22 +244,23 @@ int main(int argc, char **argv) {
         }
       }
 // Other singular points on the D = 0 curve.
-      sqt = 4*C1*(1-cos(phi2-phi3))*(C1-cos(phi2-phi3)+(1-C1)*cos(phi2+phi3));
+      sqt = 2*(C1 + 2*C1*C1 + C1*cos(2*(phi2-phi3)) - 2*C1*(1+C1)*cos(phi2-phi3) - 2*C1*(1-C1)*sin(PI/6-phi2-phi3)
+            + C1*(1-C1)*(sin(PI/6-2*phi2) + sin(PI/6-2*phi3)));
       if (sqt >= 0) {
         sqt = sqrt(sqt) / 2;
-        Z5 = (2*C1 - 1 - cos(phi2-phi3) + (C1-1)*(cos(phi2)+cos(phi3)) + sqt) / (1 - C1);
+        Z5 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6+phi2)+sin(PI/6+phi3)) + sqt) / (1 - C1);
         if (Z5 >= 0) {
-          get_cosines(phi1, phi2, phi3, PI, Z5, c51, c52, c53);
+          get_cosines(phi1, phi2, phi3, PI/3, Z5, c51, c52, c53);
           if (fabs(c1+c51) < fabs(c1-c51)) {c51 = -c51; c52 = -c52;}
-          if (c53 < 0) {c52 = -c52; c53 = -c53;}
+          if (c52 < 0) {c52 = -c52; c53 = -c53;}
           i52 = ind(acos(c52)); i53 = ind(acos(c53));
           states[i][i52][i53] = 50 + states[i][i52][i53] % 10;
           got5 = true;
 //printf("5.  %d  %f  %f %f %f\n", states[i][i52][i53], c1, c51, c52, c53);
         }
-        Z6 = (2*C1 - 1 - cos(phi2-phi3) + (C1-1)*(cos(phi2)+cos(phi3)) - sqt) / (1 - C1);
+        Z6 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6+phi2)+sin(PI/6+phi3)) - sqt) / (1 - C1);
         if (Z6 >= 0) {
-          get_cosines(phi1, phi2, phi3, PI, Z6, c61, c62, c63);
+          get_cosines(phi1, phi2, phi3, PI/3, Z6, c61, c62, c63);
           if (fabs(c1+c61) < fabs(c1-c61)) {c61 = -c61; c62 = -c62;}
           if (c62 < 0) {c62 = -c62; c63 = -c63;}
           i62 = ind(acos(c62)); i63 = ind(acos(c63));
@@ -269,57 +269,40 @@ int main(int argc, char **argv) {
 //printf("6.  %d  %f  %f %f %f\n", states[i][i62][i63], c1, c61, c62, c63);
         }
       }
-      sqt = 2*(C1 + 2*C1*C1 + C1*cos(2*(phi2-phi3)) - 2*C1*(1+C1)*cos(phi2-phi3) - 2*C1*(1-C1)*sin(PI/6-phi2-phi3)
-            + C1*(1-C1)*(sin(PI/6-2*phi2) + sin(PI/6-2*phi3)));
+      sqt = 2*(C1 + 2*C1*C1 + C1*cos(2*(phi2-phi3)) - 2*C1*(1+C1)*cos(phi2-phi3) - 2*C1*(1-C1)*sin(PI/6+phi2+phi3)
+            + C1*(1-C1)*(sin(PI/6+2*phi2) + sin(PI/6+2*phi3)));
       if (sqt >= 0) {
         sqt = sqrt(sqt) / 2;
-        Z7 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6+phi2)+sin(PI/6+phi3)) + sqt) / (1 - C1);
+        Z7 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6-phi2)+sin(PI/6-phi3)) + sqt) / (1 - C1);
         if (Z7 >= 0) {
-          get_cosines(phi1, phi2, phi3, PI/3, Z7, c71, c72, c73);
+          get_cosines(phi1, phi2, phi3, -PI/3, Z7, c71, c72, c73);
           if (fabs(c1+c71) < fabs(c1-c71)) {c71 = -c71; c72 = -c72;}
-          if (c72 < 0) {c72 = -c72; c73 = -c73;}
+          if (c73 < 0) {c72 = -c72; c73 = -c73;}
           i72 = ind(acos(c72)); i73 = ind(acos(c73));
           states[i][i72][i73] = 70 + states[i][i72][i73] % 10;
           got7 = true;
 //printf("7.  %d  %f  %f %f %f\n", states[i][i72][i73], c1, c71, c72, c73);
         }
-        Z8 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6+phi2)+sin(PI/6+phi3)) - sqt) / (1 - C1);
+        Z8 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6-phi2)+sin(PI/6-phi3)) - sqt) / (1 - C1);
         if (Z8 >= 0) {
-          get_cosines(phi1, phi2, phi3, PI/3, Z8, c81, c82, c83);
+          get_cosines(phi1, phi2, phi3, -PI/3, Z8, c81, c82, c83);
           if (fabs(c1+c81) < fabs(c1-c81)) {c81 = -c81; c82 = -c82;}
-          if (c82 < 0) {c82 = -c82; c83 = -c83;}
+          if (c83 < 0) {c82 = -c82; c83 = -c83;}
           i82 = ind(acos(c82)); i83 = ind(acos(c83));
           states[i][i82][i83] = 80 + states[i][i82][i83] % 10;
           got8 = true;
-//printf("8.  %d  %f  %f %f %f\n", states[i][i82][i83], c1, c81, c82, c83);
+//printf("8. %d  %f  %f %f %f\n", states[i][i82][i83], c1, c81, c82, c83);
         }
       }
-      sqt = 2*(C1 + 2*C1*C1 + C1*cos(2*(phi2-phi3)) - 2*C1*(1+C1)*cos(phi2-phi3) - 2*C1*(1-C1)*sin(PI/6+phi2+phi3)
-            + C1*(1-C1)*(sin(PI/6+2*phi2) + sin(PI/6+2*phi3)));
-      if (sqt >= 0) {
-        sqt = sqrt(sqt) / 2;
-        Z9 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6-phi2)+sin(PI/6-phi3)) + sqt) / (1 - C1);
-        if (Z9 >= 0) {
-          get_cosines(phi1, phi2, phi3, -PI/3, Z9, c91, c92, c93);
-          if (fabs(c1+c91) < fabs(c1-c91)) {c91 = -c91; c92 = -c92;}
-          if (c93 < 0) {c92 = -c92; c93 = -c93;}
-          i92 = ind(acos(c92)); i93 = ind(acos(c93));
-          states[i][i92][i93] = 90 + states[i][i92][i93] % 10;
-          got9 = true;
-//printf("9.  %d  %f  %f %f %f\n", states[i][i92][i93], c1, c91, c92, c93);
-        }
-        Z10 = (2*C1 - 1 - cos(phi2-phi3) + (1-C1)*(sin(PI/6-phi2)+sin(PI/6-phi3)) - sqt) / (1 - C1);
-        if (Z10 >= 0) {
-          get_cosines(phi1, phi2, phi3, -PI/3, Z10, c101, c102, c103);
-          if (fabs(c1+c101) < fabs(c1-c101)) {c101 = -c101; c102 = -c102;}
-          if (c103 < 0) {c102 = -c102; c103 = -c103;}
-          i102 = ind(acos(c102)); i103 = ind(acos(c103));
-          states[i][i102][i103] = 100 + states[i][i102][i103] % 10;
-          got10 = true;
-//printf("10. %d  %f  %f %f %f\n", states[i][i102][i103], c1, c101, c102, c103);
-        }
+      if (got5 && got6 && c53 > c63) {
+        temp = c52; c52 = c62; c62 = temp;
+        temp = c53; c53 = c63; c63 = temp;
+        itemp = i52; i52 = i62; i62 = itemp;
+        itemp = i53; i53 = i63; i63 = itemp;
+        states[i][i52][i53] -= 10;
+        states[i][i62][i63] += 10;
       }
-      if (got7 && got8 && c73 > c83) {
+      if (got7 && got8 && c72 > c82) {
         temp = c72; c72 = c82; c82 = temp;
         temp = c73; c73 = c83; c83 = temp;
         itemp = i72; i72 = i82; i82 = itemp;
@@ -327,20 +310,11 @@ int main(int argc, char **argv) {
         states[i][i72][i73] -= 10;
         states[i][i82][i83] += 10;
       }
-      if (got9 && got10 && c92 > c102) {
-        temp = c92; c92 = c102; c102 = temp;
-        temp = c93; c93 = c103; c103 = temp;
-        itemp = i92; i92 = i102; i102 = itemp;
-        itemp = i93; i93 = i103; i103 = itemp;
-        states[i][i92][i93] -= 10;
-        states[i][i102][i103] += 10;
-      }
     }
 #ifdef DEBUG
     sprintf(debug[i],
-      "%d%d%d%d%d%d%d%d%d%d < %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f  %.2f %.2f >     \n",
-      got1, got2, got3, got4, got5, got6, got7, got8, got9, got10,
-      c12, c13, c22, c23, c32, c33, c42, c43, c52, c53, c62, c63, c72, c73, c82, c83, c92, c93, c102, c103);
+      "%d%d%d%d%d%d%d%d < %.2f %.2f   %.2f %.2f   %.2f %.2f   %.2f %.2f   %.2f %.2f   %.2f %.2f   %.2f %.2f   %.2f %.2f >         \n",
+      got1, got2, got3, got4, got5, got6, got7, got8, c12, c13, c22, c23, c32, c33, c42, c43, c52, c53, c62, c63, c72, c73, c82, c83);
 #endif
     // Now determine which cells are "allowable" and which are not.
     for (j=0; j<N; j++)
@@ -403,18 +377,18 @@ int main(int argc, char **argv) {
                       (!got3 || c2 > c32 || c3 > c33) &&
                       /* cannot be below and to right of 4th special point */
                       (!got4 || c2 > c42 || c3 > c43) &&
+                      /* cannot be below and to right of 5th special point */
+                      (!got5 || c2 > c52 || c3 > c53) &&
                       /* cannot be below and to right of 7th special point */
                       (!got7 || c2 > c72 || c3 > c73) &&
-                      /* cannot be below and to right of 9th special point */
-                      (!got9 || c2 > c92 || c3 > c93) &&
                       /* middle box restriction */
                       (!got3 || !got4 || c2 > c32 || c2 < c42 || c3 < c33 || c3 > c43 || D > 0) &&
                       /* lower box restriction */
-                      (!got7 || !got3 || c2 > c72 || c2 < c32 || c3 < c73 || c3 > c33 || D < 0) &&
+                      (!got3 || !got5 || c2 > c52 || c2 < c32 || c3 < c53 || c3 > c33 || D < 0) &&
                       /* upper box restriction */
-                      (!got4 || !got9 || c2 > c42 || c2 < c92 || c3 < c43 || c3 > c93 || D < 0) &&
+                      (!got4 || !got7 || c2 > c42 || c2 < c72 || c3 < c43 || c3 > c73 || D < 0) &&
                       /* use 1st and 2nd special points when missing other special points */
-                      ((got3 && got4 && got7 && got8) || !got1 || !got2 || (
+                      ((got3 && got4 && got5 && got7) || !got1 || !got2 || (
                          (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
                          (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
                 ))))
@@ -447,8 +421,6 @@ int main(int argc, char **argv) {
           case  60: case  61: case  62: case  63:  states[i][j][k] = '6'; break;
           case  70: case  71: case  72: case  73:  states[i][j][k] = '7'; break;
           case  80: case  81: case  82: case  83:  states[i][j][k] = '8'; break;
-          case  90: case  91: case  92: case  93:  states[i][j][k] = '9'; break;
-          case 100: case 101: case 102: case 103:  states[i][j][k] = '0'; break;
           default:  states[i][j][k] = '?';
         }
     }
@@ -542,7 +514,7 @@ int main(int argc, char **argv) {
     for(j=0, x=STARTX; j < N; j++, x+=2)
       for(k=0, y=STARTY; k < N; k++, y++) {
 #ifdef SHOW_SPECIAL_PTS
-        if (states[i][j][k] >= '0' && states[i][j][k] <= '9') attron(COLOR_PAIR(15));
+        if (states[i][j][k] >= '1' && states[i][j][k] <= '8') attron(COLOR_PAIR(15));
         else
 #endif
         if (states[i][j][k] == '.') {
