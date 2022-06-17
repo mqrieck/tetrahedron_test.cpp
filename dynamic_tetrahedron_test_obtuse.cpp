@@ -1,5 +1,5 @@
 
-// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 6/13/2022)
+// dynamic_tetrahedon_test_obtuse.cpp (by M. Q. Rieck, updated: 6/16/2022)
 
 // Note: This is test code for the obtuse base triangle case, which uses far better bounds
 // than those in my dynamic_tetrahedron_test.cpp, at least for the obtuse case. Further
@@ -25,7 +25,7 @@
 // Note: For faster results, reduce M, N and/or REF_NUM (or comment out REFINED).
 
 #define M 1000                  // how many (alpha, beta, gamma) points (M^3)?
-#define N 140                   // how fine to subdivide the interval [0, PI]
+#define N 100                   // how fine to subdivide the interval [0, PI]
 #define O 0                     // set this higher to avoid low "tilt planes"
 #define PI M_PI                 // PI = 3.141592654..., of course
 #define TOL1 0.05               // tolerance for some inequalities
@@ -381,16 +381,36 @@ int main(int argc, char **argv) {
                       (!got5 || c2 > c52 || c3 > c53) &&
                       /* cannot be below and to right of 7th special point */
                       (!got7 || c2 > c72 || c3 > c73) &&
+                      /* similar provsional restrications */
+                      (got5 || !got1 || c2 > c12 || c3 > c13) &&
+                      (got7 || !got2 || c2 > c22 || c3 > c23) &&
                       /* middle box restriction */
                       (!got3 || !got4 || c2 > c32 || c2 < c42 || c3 < c33 || c3 > c43 || D > 0) &&
                       /* lower box restriction */
                       (!got3 || !got5 || c2 > c52 || c2 < c32 || c3 < c53 || c3 > c33 || D < 0) &&
                       /* upper box restriction */
                       (!got4 || !got7 || c2 > c42 || c2 < c72 || c3 < c43 || c3 > c73 || D < 0) &&
-                      /* use 1st and 2nd special points when missing other special points */
-                      ((got3 && got4 && got5 && got7) || !got1 || !got2 || (
+                      /* alternative lower box restriction */
+                      (!got1 || !got3 || got5 || c2 > c12 || c2 < c32 || c3 < c13 || c3 > c33 || D < 0) &&
+                      /* alternative upper box restriction */
+                      (!got2 || !got4 || got7 || c2 > c42 || c2 < c22 || c3 < c43 || c3 > c23 || D < 0) &&
+                      /* alternative middle box restriction */
+                      (!got3 || got4 || !got2 || c2 > c32 || c2 < c22 || c3 < c33 || c3 > c23 || D > 0) &&
+                      (got3 || !got4 || !got1 || c2 > c12 || c2 < c42 || c3 < c13 || c3 > c43 || D > 0) &&
+                      /* missing lots of special points */
+                      (got3 || got4 || got5 || got7 || (
+                         cosC * cos_beta + cosB * cos_gamma > 0 && (beta < B || gamma < C || D > 0 )))
+
+/*                      (got3 || got4 || got5 || got7 || !got1 || !got2 || (
                          (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
                          (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
+*/
+
+/*                      ((got3 && got4 && got5 && got7) || !got1 || !got2 || (
+                         (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
+                         (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
+*/
+
                 ))))
 // large alpha constraints
                 && (
