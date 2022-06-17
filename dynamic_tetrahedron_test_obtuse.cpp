@@ -400,17 +400,6 @@ int main(int argc, char **argv) {
                       /* missing lots of special points */
                       (got3 || got4 || got5 || got7 || (
                          cosC * cos_beta + cosB * cos_gamma > 0 && (beta < B || gamma < C || D > 0 )))
-
-/*                      (got3 || got4 || got5 || got7 || !got1 || !got2 || (
-                         (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
-                         (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
-*/
-
-/*                      ((got3 && got4 && got5 && got7) || !got1 || !got2 || (
-                         (c2 > c12 || c3 > c13) && (c2 > c22 || c3 > c23) &&
-                         (c2 > c12 || c2 < c22 || c3 < c13 || c3 > c23 || D > 0)))
-*/
-
                 ))))
 // large alpha constraints
                 && (
