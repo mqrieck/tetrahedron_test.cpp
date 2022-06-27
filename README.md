@@ -2,7 +2,7 @@
 
 Test code for results in a couple papers concerned with the constraints on the angles of a tetrahedron. This is related to the Perspective Three-Point Problem. 
 
-STUDY THIS MATERIAL CAREFULLY IF YOU ARE SERIOUS ABOUT THE P3P PrOBLEM. :) 
+STUDY THIS MATERIAL CAREFULLY IF YOU ARE SERIOUS ABOUT THE P3P PROBLEM. :) 
 
 Question: Given a fixed triangle in space, when you view its vertices from another point in space, what constraints exist among the angles (α, β and γ) between the rays from the viewing point to the vertices?
 
