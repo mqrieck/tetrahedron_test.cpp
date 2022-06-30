@@ -1,6 +1,6 @@
 # tetrahedron_test
 
-Test code for results in a couple papers concerned with the constraints on the angles of a tetrahedron. This is related to the Perspective Three-Point Problem. 
+Test code for results in a couple papers concerned with the constraints on the angles of a tetrahedron. 
 
 THIS MATERIAL IS INTIMATELY RELATED TO THE P3P PROBLEM.
 
