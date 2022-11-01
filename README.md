@@ -4,13 +4,13 @@ Test code for results in a couple papers concerned with the constraints on the a
 
 THIS MATERIAL IS INTIMATELY RELATED TO THE P3P PROBLEM.
 
-Question: Given a fixed triangle in space, when you view its vertices from another point in space, what constraints exist among the angles (α, β and γ) between the rays from the viewing point to the vertices?
+**Question:** Given a fixed triangle in space, when you view its vertices from another point in space, what constraints exist among the angles (α, β and γ) between the rays from the viewing point to the vertices?
 
 This simple question has a surprisingly complicated, yet still tractable (in a sense), answer. The details for the case when the base triangle is acute have been completely worked out. Acute_Triangle_Case.pdf is a fact sheet for this case. For an obtuse base triangle, the story is more complicated, but much progress has been made here too.
 
 **Recent news:** There is now a link to a video that discusses this and a related problem, and a link to the Mathematica notebook in that video, and a "four problems" fact sheet covering the same material.
 
-Older material: 
+**Older material:**
 
 The programs tetrahedon_test.cpp and dynamic_test_tetrahedron.cpp test the claims in the fact sheet and in (yet-to-be-published) research papers dealing with the construction of a tetrahedron based on a given acute triangle ABC as a face. The possible interior angles (α, β and γ) at the new vertex P are restricted in various ways, by a system of (conditional) inequalities. For more information, see the fact sheet, the notes at the top of each source code file, and the displayed instructions when the programs are run.
 
