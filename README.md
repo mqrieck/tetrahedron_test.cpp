@@ -8,7 +8,7 @@ THIS MATERIAL IS INTIMATELY RELATED TO THE P3P PROBLEM.
 
 This simple question has a surprisingly complicated, yet still tractable (in a sense), answer. The details for the case when the base triangle is acute have been completely worked out. Acute_Triangle_Case.pdf is a fact sheet for this case. For an obtuse base triangle, the story is more complicated, but much progress has been made here too.
 
-**Recent news:** There is now a link to a YouTube video that discusses this and a related problem, and a link to the Mathematica notebook used in that video, and a "four problems" fact sheet covering the same material. OL1.gif, OL2.gif and OL3.gif show off some subtle aspects of the OL Problem, without really explaining these. ObtuseK.gif is quite a nice 3D animation showing the surface on which the discriminant vanishes in cosines space (also not explained here). 
+**Recent news:** There is now a link to a YouTube video that discusses this and a related problem, and a link to the Mathematica notebook used in that video, and a "four problems" fact sheet covering the same material. LO1.gif, LO2.gif and LO3.gif show off some subtle aspects of the OL Problem, without really explaining these. ObtuseK.gif is quite a nice 3D animation showing the surface on which the discriminant vanishes in cosines space (also not explained here). 
 
 **Older material:**
 
